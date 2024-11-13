@@ -85,3 +85,12 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
    - Use `pytest` for backend testing and `npm test` for frontend testing.
 
 ---
+
+## Documentation
+
+For detailed contribution guidelines, coding standards, and setup instructions, please refer to the [docs](./docs/) folder:
+- [CONTRIBUTING.md](./docs/CONTRIBUTING.md)
+- [STYLE_GUIDE.md](./docs/STYLE_GUIDE.md)
+- [SETUP.md](./docs/SETUP.md)
+
+---
