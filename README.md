@@ -15,7 +15,7 @@ The AI Resume Analyzer helps job seekers refine their resumes by analyzing conte
 
 ---
 
-## Team Assignments
+## Team-3 Assignments
 
 | Team Member                            | Assignment                      |
 |----------------------------------------|---------------------------------|
