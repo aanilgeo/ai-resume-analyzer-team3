@@ -1,12 +1,8 @@
 # AI Resume Analyzer 
 
-**An AI-powered tool to provide personalized feedback, skill matching, and job recommendations based on resume content.**
-
----
-
 ## Project Overview
 
-The AI Resume Analyzer is designed to help job seekers refine their resumes and find job opportunities that align with their skills and experiences. Using NLP and machine learning, this platform analyzes resume content, provides keyword and structure feedback, and suggests relevant job opportunities to help optimize career pathways.
+The AI Resume Analyzer helps job seekers refine their resumes by analyzing content and providing valuable feedback on keywords, structure, and skill gaps. Using NLP and machine learning techniques, this platform offers targeted insights to optimize resumes for improved career opportunities.
 
 ---
 
