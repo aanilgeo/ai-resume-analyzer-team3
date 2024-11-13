@@ -1,0 +1,10 @@
+# FastAPI and related dependencies
+fastapi
+uvicorn
+
+# Security for hashing passwords and JWT-based authentication
+bcrypt
+python-jose
+
+# For testing
+pytest
