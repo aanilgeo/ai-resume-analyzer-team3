@@ -1,10 +1,15 @@
 # FastAPI and related dependencies
 fastapi
 uvicorn
+pydantic[email]
+python-multipart
 
 # Security for hashing passwords and JWT-based authentication
 bcrypt
+passlib
 python-jose
+python-dotenv
+python-docx
 
 # For testing
 pytest
