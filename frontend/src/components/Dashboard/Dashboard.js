@@ -2,29 +2,51 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const JobDescriptionInput = () => {
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null);
+  const [job_description, setDescription] = useState('');
+  const [resume_file, setFile] = useState(null);
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Submitting form...');
-    if (description === '') {
+    if (job_description === '') {
       alert("Please fill out the job description, job description cannot be empty");
     }
-    else if (file == null) {
+    else {
+      try {
+        console.log(job_description)
+        const response = await axios.post('http://127.0.0.1:8000/api/job-description', {
+          job_description: job_description
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        setMessage(response.data.message); // Display success message
+      } catch (error) {
+        setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
+      }
+    }
+    console.log('Response:', message);
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (resume_file == null) {
       alert("Please upload a resume for review, resume field cannot be empty");
     }
     else {
       try {
-        console.log(file)
-        const response = await axios.post('http://127.0.0.1:8000/api/dashboard', {
-          description,
-          file,
+        console.log(resume_file)
+        const response = await axios.post('http://127.0.0.1:8000/api/resume-upload', {
+          resume_file
+        }, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
         setMessage(response.data.message); // Display success message
       } catch (error) {
-        alert("Something happened");
         setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
       }
     }
@@ -42,19 +64,33 @@ const JobDescriptionInput = () => {
           <h5>Job Description:</h5>
           <div>
             <textarea
-              value={description}
+              title='Job Description Submission'
+              placeholder='Input the details of the job here...'
+              value={job_description}
               onChange={(e) => setDescription(e.target.value)}
               rows="6"
               required
             />
           </div>
+          <br/>
+          <div>
+            <button type="submit">Submit Description</button>
+          </div>
+        </form>
+        <form onSubmit={handleUpload}>
           <h5>Resume Upload:</h5>
           <div>
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} required />
+            <input
+              title='Resume File Upload'
+              placeholder='N/A'
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              required
+            />
           </div>
           <br/>
           <div>
-            <button type="submit">Submit</button>
+            <button type="submit">Upload Resume</button>
           </div>
         </form>
       </div>

@@ -21,6 +21,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+@app.middleware("http")
+async def add_header(request, call_next):
+    response = await call_next(request)
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
+
 # Include routers for API endpoints
 app.include_router(auth_router_factory(SECRET_KEY), prefix="/api", tags=["auth"])
 app.include_router(job_description.router, prefix="/api", tags=["job_description"])
