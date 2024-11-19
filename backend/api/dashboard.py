@@ -4,6 +4,7 @@ from schemas.dashboard import JobDescriptionRequest
 from utils.storage import store_data
 from io import BytesIO
 from docx import Document
+import time
 
 router = APIRouter()
 
@@ -31,11 +32,18 @@ async def upload_resume(resume_file: UploadFile = File(...)):
     # Store the extracted text content in temporary storage
     store_data("resume", "temp_user", text_content)  # Replace "temp_user" with actual user identifier as needed
 
+    # To test loading
+    #time.sleep(5)
+
     return {"message": "Resume uploaded successfully", "filename": resume_file.filename}
 
 @router.post("/job-description")
 async def handle_job_description(job_description: str = Form(...)):
-    if len(job_description.job_description) > 5000:
+    if len(job_description) > 5000:
         raise HTTPException(status_code=400, detail="Job description exceeds character limit.")
-    store_data("job_description", "temp_user", job_description.job_description)  # Placeholder user ID for demo
+    store_data("job_description", "temp_user", job_description)  # Placeholder user ID for demo
+
+    # To test loading
+    #time.sleep(5)
+
     return {"message": "Job description received"}

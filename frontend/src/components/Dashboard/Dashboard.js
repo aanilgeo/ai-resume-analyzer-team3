@@ -5,6 +5,7 @@ const JobDescriptionInput = () => {
   const [job_description, setDescription] = useState('');
   const [resume_file, setFile] = useState(null);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,11 +16,12 @@ const JobDescriptionInput = () => {
     else {
       try {
         console.log(job_description)
+        setLoading(true)
         const response = await axios.post('http://127.0.0.1:8000/api/job-description', {
-          job_description: job_description
+          job_description
         }, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
           }
         });
         setMessage(response.data.message); // Display success message
@@ -27,6 +29,7 @@ const JobDescriptionInput = () => {
         setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
       }
     }
+    setLoading(false)
     console.log('Response:', message);
   };
 
@@ -38,6 +41,7 @@ const JobDescriptionInput = () => {
     else {
       try {
         console.log(resume_file)
+        setLoading(true)
         const response = await axios.post('http://127.0.0.1:8000/api/resume-upload', {
           resume_file
         }, {
@@ -50,6 +54,7 @@ const JobDescriptionInput = () => {
         setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
       }
     }
+    setLoading(false)
     console.log('Response:', message);
   };
 
@@ -58,6 +63,13 @@ const JobDescriptionInput = () => {
       <div>
         <h2>Dashboard</h2>
         <p>Welcome to the user dashboard.</p>
+        <script>
+          if (loading) {
+            <p>
+              LOADING...
+            </p>
+          }
+        </script>
       </div>
       <div>
         <form onSubmit={handleSubmit}>

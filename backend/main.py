@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import job_description, resume, dashboard
+from api import dashboard
 from utils.storage import store_data, get_data, clear_data
 import os
 from dotenv import load_dotenv
@@ -29,9 +29,7 @@ async def add_header(request, call_next):
 
 # Include routers for API endpoints
 app.include_router(auth_router_factory(SECRET_KEY), prefix="/api", tags=["auth"])
-app.include_router(job_description.router, prefix="/api", tags=["job_description"])
-app.include_router(resume.router, prefix="/api", tags=["resume"])
-app.include_router(dashboard.router, prefix="/api", tags=["resume"])
+app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
 
 # Run app with: `uvicorn main:app --reload`
 if __name__ == "__main__":
