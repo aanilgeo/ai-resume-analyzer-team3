@@ -7,7 +7,7 @@ from utils.storage import store_data, get_data
 from datetime import datetime, timedelta, timezone
 
 # Function to create and return router, accepting SECRET_KEY as a parameter
-def get_router(secret_key):
+def get_router(secret_key): # note: include .env file in root directory with SECRET_KEY
     router = APIRouter()
     ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
