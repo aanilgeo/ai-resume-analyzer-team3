@@ -33,7 +33,7 @@ async def upload_resume(resume_file: UploadFile = File(...)):
     store_data("resume", "temp_user", text_content)  # Replace "temp_user" with actual user identifier as needed
 
     # To test loading
-    #time.sleep(5)
+    time.sleep(2)
 
     return {"message": "Resume uploaded successfully", "filename": resume_file.filename}
 
@@ -44,6 +44,6 @@ async def handle_job_description(job_description: str = Form(...)):
     store_data("job_description", "temp_user", job_description)  # Placeholder user ID for demo
 
     # To test loading
-    #time.sleep(5)
+    time.sleep(2)
 
-    return {"message": "Job description received"}
+    return {"message": "Job description received successfully"}
