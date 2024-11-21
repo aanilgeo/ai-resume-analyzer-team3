@@ -9,6 +9,11 @@ const JobDescriptionInput = () => {
   const [loading, setLoading] = useState(false);
   const [submittedDescription, setSubmittedDescription] = useState(false);
   const [submittedResume, setSubmittedResume] = useState(false);
+  const [fitScore, setFitScore] = useState(0);
+  const [skillsList, setSkillsList] = useState([]);
+  const [keywordsList, setKeywordsList] = useState([]);
+  const [improvementSuggestions, setImprovementSuggestions] = useState('');
+
   var job_description_length = job_description.length
 
   const handleSubmit = async (e) => {
@@ -36,6 +41,7 @@ const JobDescriptionInput = () => {
         setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
       }
     }
+    console.log(message)
     setLoading(false);
   };
 
@@ -45,8 +51,8 @@ const JobDescriptionInput = () => {
       alert("Please upload a resume for review, resume field cannot be empty");
     }
     else if (
-      resume_file.type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
-      resume_file.type != "application/pdf"
+      resume_file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
+      resume_file.type !== "application/pdf"
     ) {
       alert("Invalid file type. Only PDF and DOCX files are allowed");
     }
@@ -72,6 +78,7 @@ const JobDescriptionInput = () => {
         alert("There was a problem with the server, please try again later");
         setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
       }
+      console.log(message)
       setLoading(false);
     }
   };
@@ -87,8 +94,8 @@ const JobDescriptionInput = () => {
 
   function changeFile(e) {
     if (
-      e.target.files[0].type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
-      e.target.files[0].type != "application/pdf"
+      e.target.files[0].type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
+      e.target.files[0].type !== "application/pdf"
     ) {
       alert("Invalid file type. Only PDF and DOCX files are allowed");
       e.target.value = null;
@@ -101,6 +108,74 @@ const JobDescriptionInput = () => {
     }
     else {
       setFile(e.target.files[0])
+    }
+  };
+
+  function checkProgress(progress) {
+    var i = 0;
+    if (i === 0) {
+      i = 1;
+      var progressBar = document.getElementById("progressBar");
+      var progressLabel = document.getElementById("progressLabel");
+      var width = 0;
+      var id = setInterval(frame, 0);
+      function frame() {
+        if (width >= progress) {
+          clearInterval(id);
+          i = 0;
+        } else {
+          width++;
+          progressBar.style.width = width + "%";
+          progressLabel.innerHTML = width + "%";
+          if (width > 0) {
+            progressBar.style.backgroundColor = "#b30000"
+          }
+          if (width > 50) {
+            progressBar.style.backgroundColor = "#b3b300"
+          }
+          if (width > 80) {
+            progressBar.style.backgroundColor = "#59b300"
+          } 
+        }
+      }
+    }
+  }
+
+  function getFeedback() {
+    if (submittedDescription && submittedResume) {
+      const mockdata = [
+        {
+          'fitScore': 15,
+          'skillsList': ['Skill0'],
+          'keywordsList': ['Keyword0'],
+          'improvementSuggestions': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        },
+        {
+          'fitScore': 65,
+          'skillsList': ['Skill0', 'Skill1', 'Skill5'],
+          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6'],
+          'improvementSuggestions': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+        },
+        {
+          'fitScore': 85,
+          'skillsList': ['Skill0', 'Skill1', 'Skill5', 'Skill6'],
+          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6', 'Keyword9'],
+          'improvementSuggestions': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+        }
+      ]
+
+      var feedback = mockdata[Math.floor(Math.random() * mockdata.length)]
+
+      setFitScore(feedback.fitScore);
+      checkProgress(feedback.fitScore);
+      console.log(fitScore)
+      setSkillsList(feedback.skillsList);
+      setKeywordsList(feedback.keywordsList);
+      setImprovementSuggestions(feedback.improvementSuggestions);
+
+      document.getElementById("feedback").classList.remove("hidden")
+    } else {
+      alert("Please submit job description and resume to get feedback")
     }
   };
 
@@ -134,7 +209,7 @@ const JobDescriptionInput = () => {
               title='Job Description Submission'
               placeholder='Input the details of the job here...'
               value={job_description}
-              onClick={(e) => setSubmittedDescription(false)}
+              onClick={() => setSubmittedDescription(false)}
               onChange={(e) => changeDescription(e.target.value)}
               rows="6"
               maxLength={5000}
@@ -179,7 +254,7 @@ const JobDescriptionInput = () => {
               title='Resume File Upload'
               placeholder='N/A'
               type="file"
-              onClick={(e) => setSubmittedResume(false)}
+              onClick={() => setSubmittedResume(false)}
               onChange={(e) => changeFile(e)}
               required
             />
@@ -194,7 +269,42 @@ const JobDescriptionInput = () => {
             }
           </div>
         </form>
+        <br/>
+        {submittedDescription && submittedResume &&
+        <button 
+          type="submit"
+          onClick={getFeedback}
+          >
+            Get Feedback
+        </button>
+        }
       </div>
+      <br/>
+        <div id='feedback' className='hidden'>
+          <h4>Results:</h4>
+          <h5>Resume Fit Score:</h5>
+          <div id="progressBar">
+            <div id="progressLabel">0%</div>
+          </div>
+          <h5>Matched Skills:</h5>
+          <ul>
+            {skillsList.map((skill, index) => {
+              return <li key={index}>{skill}</li>
+              }
+            )}
+          </ul>
+          <h5>Matched Keywords:</h5>
+          <ul>
+            {keywordsList.map((keyword, index) => {
+              return <li key={index}>{keyword}</li>
+              }
+            )}
+          </ul>
+          <h5>Improvement Suggestions:</h5>
+          <div>
+            {improvementSuggestions}
+          </div>
+        </div>
     </>
   );
 };
