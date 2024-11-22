@@ -12,9 +12,19 @@ router = APIRouter()
 async def upload_resume(resume_file: UploadFile = File(...)):
     # Allow both PDF and DOCX file types
     allowed_content_types = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
-    
+    # Maximum file size = 2MB
+    maximum_file_size_allowed = 1024 * 1024 * 2
+
+    #Validate the file type
     if resume_file.content_type not in allowed_content_types:
         raise HTTPException(status_code=400, detail="Invalid file type. Only PDF and DOCX files are allowed.")
+    #Validate the file size
+    size_of_file = len(await resume_file.read())
+    if maximum_file_size_allowed < size_of_file:
+        raise HTTPException(status_code=400, detail="File cannot exceed 2MB. Check file size.")
+    
+    #Need to restart the file pointer since we read the file
+    await resume_file.seek(0)
     
     # Read the file content
     content = await resume_file.read()
@@ -39,9 +49,14 @@ async def upload_resume(resume_file: UploadFile = File(...)):
 
 @router.post("/job-description")
 async def handle_job_description(job_description: str = Form(...)):
+    #Description should not exceed 5000 characters
     if len(job_description) > 5000:
         raise HTTPException(status_code=400, detail="Job description exceeds character limit.")
-    store_data("job_description", "temp_user", job_description)  # Placeholder user ID for demo
+    
+    #Clean the text by removing extraneous whitespace
+    individual_words = job_description.split()
+    clean_description = " ".join(individual_words)
+    store_data("job_description", "temp_user", clean_description)  # Placeholder user ID for demo
 
     # To test loading
     time.sleep(2)
