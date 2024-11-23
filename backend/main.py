@@ -5,10 +5,37 @@ from utils.storage import store_data, get_data, clear_data
 import os
 from dotenv import load_dotenv
 from api.auth import get_router as auth_router_factory
+import secrets
 
+# Path to the .env file where secret key will be stored
+ENV_FILE_PATH = "../.env"
+
+# Generate a secret key and store it in the .env folder 
+def generate_and_store_secret_key():
+    # Check if the .env file exists
+    if not os.path.exists(ENV_FILE_PATH):
+        print("No .env file found. Generating a new SECRET_KEY...")
+        # Generate a random secret key
+        secret_key = secrets.token_urlsafe(32)
+        
+        # Write the key to the .env file
+        with open(ENV_FILE_PATH, "w") as env_file:
+            env_file.write(f"SECRET_KEY={secret_key}\n")
+        
+        print(f"Generated new SECRET_KEY and stored it in {ENV_FILE_PATH}")
+    else:
+        print(".env file found. Loading SECRET_KEY...")
+
+
+# Call the function to ensure .env file and SECRET_KEY exist
+generate_and_store_secret_key()
+
+# Load environment variables from the .env file
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY could not be loaded. Check .env file.")
 
 app = FastAPI()
 
