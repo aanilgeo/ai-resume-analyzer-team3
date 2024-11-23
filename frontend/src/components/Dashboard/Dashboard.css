@@ -226,3 +226,17 @@ div.fade {
 		background-color:transparent;
 	}
 }
+
+.header {
+	height: 50px;
+    display: flex;
+    align-items: center;
+	gap: 20px;
+}
+
+.logout-button {
+    background-color: lightgray;
+    border: 1px solid gray;
+    padding: 5px 10px;
+    cursor: pointer;
+}
