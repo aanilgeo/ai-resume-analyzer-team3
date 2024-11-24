@@ -31,7 +31,6 @@ const Register = () => {
       setError('')
     } catch (error) {
       setSuccess(false);
-      console.log(error);
       error.response?.data?.detail 
         ? setError(error.response.data.detail) 
         : setError('Failed to register. Please try again.');

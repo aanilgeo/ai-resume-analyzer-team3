@@ -17,7 +17,6 @@ const Login = () => {
 
       // extract token from the response
       const { token } = response.data;
-      console.log(response);
 
       // save the token in localStorage
       localStorage.setItem('token', token);
@@ -28,7 +27,6 @@ const Login = () => {
     } catch(err) {
       setError('Invalid email or password');
     }
-    console.log('Logging in with', { email, password });
   };
 
   return (
