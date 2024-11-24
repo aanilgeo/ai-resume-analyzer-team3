@@ -6,7 +6,7 @@ import axios from 'axios';
 test('renders input fields and submit button', () => {
     render(
         // MemoryRouter simulates navigation and routing behavior
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Login />
         </MemoryRouter>
     );
