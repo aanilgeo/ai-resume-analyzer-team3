@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt, JWTError
-from schemas.auth import UserCreate, UserLogin
-from utils.storage import store_data, get_data
+from backend.schemas.auth import UserCreate, UserLogin
+from backend.utils.storage import store_data, get_data
 from datetime import datetime, timedelta, timezone
 
 # Function to create and return router, accepting SECRET_KEY as a parameter

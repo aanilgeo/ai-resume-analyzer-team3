@@ -6,7 +6,7 @@ from fastapi import File, Form
 # Pydantic model for the response after successful resume upload
 class ResumeUploadResponse(BaseModel):
     message: str
-    filename: str
+    status: str
 
 # Pydantic model for the parsed resume content (placeholder for future parsing and analysis)
 class ResumeContentResponse(BaseModel):
