@@ -24,14 +24,12 @@ describe('after a successful login', () => {
         // Change the value of the email input
         const emailElement = screen.getByLabelText('Email:');
         fireEvent.change(emailElement, {
-            value: 'valid@email.com',
-        });
+            target: { value: 'valid@email.com' } });
     
         // Change the value of the password input
         const passwordElement = screen.getByLabelText('Password:');
         fireEvent.change(passwordElement, {
-            value: 'validPassword',
-        })
+            target: { value: 'validPassword' } });
         
         // Click login
         const loginButton = screen.getByRole('button', { name: /Login/i });

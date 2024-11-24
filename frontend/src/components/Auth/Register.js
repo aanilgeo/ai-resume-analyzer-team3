@@ -17,7 +17,7 @@ const Register = () => {
 
     // Validate that password and confirmPassword match
     if (password !== confirmPassword) {
-      setError('Passwords do no match');
+      setError('Passwords do not match');
       return;
     }
 
@@ -39,8 +39,9 @@ const Register = () => {
       <h2>Register</h2>
       <form onSubmit={handleRegister}>
         <div>
-          <label>Email:</label>
+          <label htmlFor='email'>Email:</label>
           <input 
+            id='email'
             type="email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
