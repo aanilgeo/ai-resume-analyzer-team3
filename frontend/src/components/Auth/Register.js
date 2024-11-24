@@ -30,7 +30,11 @@ const Register = () => {
       setSuccess(true);
       setError('')
     } catch (error) {
-      setError('Failed to register. Please try again.');
+      setSuccess(false);
+      console.log(error);
+      error.response?.data?.detail 
+        ? setError(error.response.data.detail) 
+        : setError('Failed to register. Please try again.');
     }
   };
 
