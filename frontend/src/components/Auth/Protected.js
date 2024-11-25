@@ -10,7 +10,6 @@ const Protected = ({ children }) => {
   useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
-        console.log('No token found, redirecting...');
         navigate('/login', { state: { from: location }, replace: true }); // redirect to login
         return;
       }
@@ -22,10 +21,7 @@ const Protected = ({ children }) => {
             Authorization: `Bearer ${token}`, // include the token in the Authorization header
           },
         });
-        console.log('Token is valid');
-        console.log(token);
       } catch (error) {
-        console.error('Token verification failed:', error);
         localStorage.removeItem('token'); // remove invalid token
         navigate('/login', { state: { from: location }, replace: true }); // redirect to login
       }

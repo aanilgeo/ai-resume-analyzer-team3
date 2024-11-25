@@ -17,18 +17,16 @@ const Login = () => {
 
       // extract token from the response
       const { token } = response.data;
-      console.log(response);
 
       // save the token in localStorage
       localStorage.setItem('token', token);
 
       // redirect to the originally requested route or a default route
-      const from = location.state?.from?.pathname || '/dashboard';
+      const from = location.state?.from?.pathname || '/';
       navigate(from)
     } catch(err) {
       setError('Invalid email or password');
     }
-    console.log('Logging in with', { email, password });
   };
 
   return (
@@ -36,10 +34,22 @@ const Login = () => {
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */} 
       <form onSubmit={handleLogin}>
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <label htmlFor='email'>Email:</label>
+        <input 
+          id='email' 
+          type="email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
+        />
+        <label htmlFor='password'>Password:</label>
+        <input 
+          id='password' 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
         <button type="submit">Login</button>
       </form>
     </div>

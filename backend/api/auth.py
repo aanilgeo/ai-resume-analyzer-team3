@@ -24,6 +24,8 @@ def get_router(secret_key): # note: include .env file in root directory with SEC
 
     @router.post("/register")
     async def register_user(user: UserCreate):
+        if get_data(user.email, "hashed_password"):
+            raise HTTPException(status_code=400, detail="Email is already registered")
         hashed_password = pwd_context.hash(user.password)
         store_data(user.email, "hashed_password", hashed_password)
         return {"message": "User registered successfully"}

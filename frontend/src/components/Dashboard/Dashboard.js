@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Dashboard.css'
+import LogoutButton from '../Auth/LogoutButton';
 
 const JobDescriptionInput = () => {
   const [job_description, setDescription] = useState('');
@@ -198,7 +199,10 @@ const JobDescriptionInput = () => {
           </>
       }
       <div>
-        <h2>Dashboard</h2>
+        <div className="header">
+          <h2>Dashboard</h2>
+          <LogoutButton className="logout-button" />
+        </div>
         <p>Welcome to the user dashboard.</p>
       </div>
       <div>
