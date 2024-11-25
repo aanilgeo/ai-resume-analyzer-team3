@@ -63,6 +63,8 @@
 
 - **Frontend**: Use `npm test` to run frontend tests:
   ```bash
+  cd frontend
+  npm install
   npm test
   ```
 
