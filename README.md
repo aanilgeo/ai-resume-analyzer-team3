@@ -17,15 +17,13 @@ The AI Resume Analyzer helps job seekers refine their resumes by analyzing conte
 
 ## Team-3 Assignments
 
-| Team Member                            | Assignment                      |
-|----------------------------------------|---------------------------------|
-| Andrew Anil George (Project Manager)   | Placeholder for assignment      |
-| Sebastian Alcock                       | Placeholder for assignment      |
-| Jhaylor Cudia                          | Placeholder for assignment      |
-| Harshit Bansal                         | Placeholder for assignment      |
-| Neel Patel                             | Placeholder for assignment      |
-
-*(Assignments will be updated as tasks are delegated.)*
+| Team Member                            | Assignment                                     |
+|----------------------------------------|------------------------------------------------|
+| Andrew Anil George (Project Manager)   | Project Base Setup + Final Review & Merge      |
+| Sebastian Alcock                       | Tasks 9, 13, 14, 15, 16 + Backend Unittesting  |
+| Jhaylor Cudia                          | Tasks 4, 5, 6, 7, 14, 16 + Backend Unittesting |
+| Harshit Bansal                         | Tasks 8, 10, 12 + Frontend Unittesting         |
+| Neel Patel                             | Task 11 + Frontend Unitesting                  |
 
 ---
 
@@ -37,37 +35,47 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
 
 ## Setup Instructions
 
-### Prerequisites
-
-- **Python** (version 3.8 or higher)
-- **Node.js** and **npm** (for the frontend)
-
 ### Steps to Set Up the Project Locally
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-org/resume-analyzer-team3.git
-   cd resume-analyzer-team3
-   ```
+1. **Initial Setup**:
+   - Clone the repository
+      ```bash
+      git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
+      cd ai-resume-analyzer-team3/
+      ```
+   - Install dependencies:
+     ```bash
+     sudo apt install python3-pip
+     pip install -r requirements.txt
+     ```
 
 2. **Backend Setup**:
    - Navigate to the backend directory:
      ```bash
      cd backend
      ```
-   - Install dependencies:
-     ```bash
-     pip install -r requirements.txt
-     ```
+   - Set the `PYTHONPATH` environment variable (to ensure the `backend` module is accessible):
+      - **Linux/Mac/WSL**:
+          ```bash
+          export PYTHONPATH="/absolute/path/to/ai-resume-analyzer-team3"
+          ```
+          Replace `/absolute/path/to/ai-resume-analyzer-team3` with the full path to your project directory (e.g., `/home/username/ai-resume-analyzer-team3`).
+     
+      - **Windows**:
+        ```bash
+        set PYTHONPATH=C:\absolute\path\to\ai-resume-analyzer-team3
+        ```
+        Replace `C:\absolute\path\to\ai-resume-analyzer-team3` with the full path to your project directory.
    - Start the FastAPI server:
      ```bash
+     sudo apt install uvicorn
      uvicorn main:app --reload
      ```
 
 3. **Frontend Setup**:
-   - Navigate to the frontend directory:
+   - Open a new terminal and navigate to the frontend directory:
      ```bash
-     cd ../frontend
+     cd frontend
      ```
    - Install dependencies:
      ```bash
@@ -79,10 +87,11 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```
 
 4. **Running the Application**:
-   - Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8000`.
+   - Access the app at `http://localhost:3000`.
 
 5. **Testing**:
-   - Use `pytest` for backend testing and `npm test` for frontend testing.
+   - `pytest` is used for backend testing and `jest` is for frontend testing.
+   - For more info on how to perform testing, go to [SETUP.md](./docs/SETUP.md).
 
 ---
 
