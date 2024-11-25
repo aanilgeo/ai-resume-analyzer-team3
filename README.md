@@ -37,11 +37,6 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
 
 ## Setup Instructions
 
-### Prerequisites
-
-- **Python** (version 3.8 or higher)
-- **Node.js** and **npm** (for the frontend)
-
 ### Steps to Set Up the Project Locally
 
 1. **Initial Setup**:
@@ -61,15 +56,18 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```bash
      cd backend
      ```
-   - Set the PYTHONPATH environment variable (to ensure the `backend` module is accessible):
-     - Mac/Linux:
-       ```bash
-       export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-       ```
-      - Windows:
+   - Set the `PYTHONPATH` environment variable (to ensure the `backend` module is accessible):
+      - **Linux/Mac/WSL**:
+          ```bash
+          export PYTHONPATH="/absolute/path/to/ai-resume-analyzer-team3"
+          ```
+          Replace `/absolute/path/to/ai-resume-analyzer-team3` with the full path to your project directory (e.g., `/home/username/ai-resume-analyzer-team3`).
+     
+      - **Windows**:
         ```bash
-        set PYTHONPATH=%PYTHONPATH%;%cd%
+        set PYTHONPATH=C:\absolute\path\to\ai-resume-analyzer-team3
         ```
+        Replace `C:\absolute\path\to\ai-resume-analyzer-team3` with the full path to your project directory.
    - Start the FastAPI server:
      ```bash
      sudo apt install uvicorn
@@ -77,9 +75,9 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```
 
 3. **Frontend Setup**:
-   - Navigate to the frontend directory:
+   - Open a new terminal and navigate to the frontend directory:
      ```bash
-     cd ../frontend
+     cd frontend
      ```
    - Install dependencies:
      ```bash
@@ -91,10 +89,11 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```
 
 4. **Running the Application**:
-   - Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8000`.
+   - Access the app at `http://localhost:3000`.
 
 5. **Testing**:
-   - Use `pytest` for backend testing and `npm test` for frontend testing.
+   - `pytest` is used for backend testing and `jest` is for frontend testing.
+   - For more info on how to perform testing, go to [SETUP.md](./docs/SETUP.md).
 
 ---
 
