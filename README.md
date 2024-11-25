@@ -61,8 +61,18 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```bash
      cd backend
      ```
+   - Set the PYTHONPATH environment variable (to ensure the `backend` module is accessible):
+     - Mac/Linux:
+       ```bash
+       export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+       ```
+      - Windows:
+        ```bash
+        set PYTHONPATH=%PYTHONPATH%;%cd%
+        ```
    - Start the FastAPI server:
      ```bash
+     sudo apt install uvicorn
      uvicorn main:app --reload
      ```
 
