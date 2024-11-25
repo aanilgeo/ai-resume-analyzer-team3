@@ -178,11 +178,17 @@ it('File input validation - file too large', async () => {
     blob['name'] = 'resume.pdf';
     var file = blob;
     Object.defineProperty(file, 'size', { value: 20000001 })
+    Object.defineProperty(file, 'type', { value: 'application/pdf' })
     
     const input = screen.getByRole('fileInput');
     const form = screen.getByRole('fileForm');
 
     await user.upload(input, file);
+    
+    await waitFor(() => {
+        expect(window.alert).toHaveBeenCalled();
+        expect(axios.post).not.toHaveBeenCalled();
+    });
     
     act(() => {
         fireEvent.submit(form);
