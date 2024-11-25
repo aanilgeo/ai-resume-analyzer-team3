@@ -77,5 +77,6 @@
     ```bash
     npm test -- --coverage
     ```
+    - `Note`: During test coverage, there might be some red lines shown which are uncovered. Uncovered lines are double-checking on submit after it has been already checked once in on upload, and additional unrequired quality of life features.
 
 Thank you for setting up the project! For any questions, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) for guidance on collaborating.
