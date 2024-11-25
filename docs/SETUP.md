@@ -1,46 +1,58 @@
-# Project Setup Guide
+# Project Setup and Testing Guide
 
-Follow these instructions to set up the project locally.
+## Steps to Set Up the Project Locally
 
-## Prerequisites
+1. **Initial Setup**:
+   - Clone the repository
+      ```bash
+      git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
+      cd ai-resume-analyzer-team3/
+      ```
+   - Install dependencies:
+     ```bash
+     sudo apt install python3-pip
+     pip install -r requirements.txt
+     ```
 
-- **Python**: Ensure Python 3.8+ is installed.
-- **Node.js**: Ensure Node.js and npm are installed for frontend setup.
-- **Environment Variables**: Set up necessary API keys and configuration in a `.env` file.
+2. **Backend Setup**:
+   - Navigate to the backend directory:
+     ```bash
+     cd backend
+     ```
+   - Set the `PYTHONPATH` environment variable (to ensure the `backend` module is accessible):
+      - **Linux/Mac/WSL**:
+          ```bash
+          export PYTHONPATH="/absolute/path/to/ai-resume-analyzer-team3"
+          ```
+          Replace `/absolute/path/to/ai-resume-analyzer-team3` with the full path to your project directory (e.g., `/home/username/ai-resume-analyzer-team3`).
+     
+      - **Windows**:
+        ```bash
+        set PYTHONPATH=C:\absolute\path\to\ai-resume-analyzer-team3
+        ```
+        Replace `C:\absolute\path\to\ai-resume-analyzer-team3` with the full path to your project directory.
+   - Start the FastAPI server:
+     ```bash
+     sudo apt install uvicorn
+     uvicorn main:app --reload
+     ```
 
-## Backend Setup
+3. **Frontend Setup**:
+   - Open a new terminal and navigate to the frontend directory:
+     ```bash
+     cd frontend
+     ```
+   - Install dependencies:
+     ```bash
+     npm install
+     ```
+   - Start the React development server:
+     ```bash
+     npm start
+     ```
 
-1. **Navigate to the Backend Directory**:
-   ```bash
-   cd backend
-   ```
-
-2. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Server**:
-   ```bash
-   uvicorn main:app --reload
-   ```
-
-## Frontend Setup
-
-1. **Navigate to the Frontend Directory**:
-   ```bash
-   cd frontend
-   ```
-
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Run the Development Server**:
-   ```bash
-   npm start
-   ```
+4. **Running the Application**:
+   - Access the app at `http://localhost:3000`.
 
 ## Running Tests
 
