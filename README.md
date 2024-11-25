@@ -44,21 +44,22 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
 
 ### Steps to Set Up the Project Locally
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
-   cd ai-resume-analyzer-team3/
-   ```
+1. **Initial Setup**:
+   - Clone the repository
+      ```bash
+      git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
+      cd ai-resume-analyzer-team3/
+      ```
+   - Install dependencies:
+     ```bash
+     sudo apt install python3-pip
+     pip install -r requirements.txt
+     ```
 
 2. **Backend Setup**:
    - Navigate to the backend directory:
      ```bash
      cd backend
-     ```
-   - Install dependencies:
-     ```bash
-     sudo apt install python3-pip
-     pip install -r requirements.txt
      ```
    - Start the FastAPI server:
      ```bash
