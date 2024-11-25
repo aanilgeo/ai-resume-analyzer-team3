@@ -57,6 +57,7 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
      ```
    - Install dependencies:
      ```bash
+     sudo apt install python3-pip
      pip install -r requirements.txt
      ```
    - Start the FastAPI server:
