@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Dashboard.css'
 
-const JobDescriptionInput = () => {
+const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
   const [resumeFile, setFile] = useState(null);
   const [message, setMessage] = useState('');
@@ -329,4 +329,4 @@ const JobDescriptionInput = () => {
   );
 };
 
-export default JobDescriptionInput;
+export default Dashboard;
