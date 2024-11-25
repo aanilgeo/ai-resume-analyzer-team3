@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Dashboard.css'
+import LogoutButton from '../Auth/LogoutButton';
 
 const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
@@ -211,6 +212,7 @@ const Dashboard = () => {
       }
       <div>
         <h2 role='title'>Dashboard</h2>
+        <LogoutButton className="logout-button" />
         <p role='titleMessage'>Welcome to the user dashboard.</p>
       </div>
       <div>
