@@ -9,7 +9,12 @@ from backend.utils.pdf_parser import extract_text_from_pdf
 from dotenv import load_dotenv
 from backend.api.auth import get_router as auth_router_factory
 import os
+import sys
+# Add the backend directory (or project root) to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+
 import secrets
+
 
 # Path to the .env file where secret key will be stored
 ENV_FILE_PATH = "../.env"
