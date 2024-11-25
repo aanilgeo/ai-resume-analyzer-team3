@@ -46,8 +46,8 @@ Follow our project roadmap on [GitHub Project](https://github.com/users/aanilgeo
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-org/resume-analyzer-team3.git
-   cd resume-analyzer-team3
+   git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
+   cd ai-resume-analyzer-team3/
    ```
 
 2. **Backend Setup**:
