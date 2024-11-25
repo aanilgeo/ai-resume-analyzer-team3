@@ -61,6 +61,12 @@
   pytest
   ```
 
+  - To run the tests and generate a test coverage report:
+    ```bash
+    pip install pytest pytest-cov
+    pytest --cov=backend --cov-report=term-missing
+    ```
+
 - **Frontend**: Use `npm test` to run frontend tests:
   ```bash
   cd frontend
