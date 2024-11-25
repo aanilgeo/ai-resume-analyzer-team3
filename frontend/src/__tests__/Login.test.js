@@ -12,6 +12,7 @@ jest.mock('react-router-dom', () => ({
 
 test('redirects the user to the homepage and stores token in localStorage after a successful login', async () => {
     render(
+        // MemoryRouter simulates navigation and routing behavior
         <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Login />
         </MemoryRouter>
