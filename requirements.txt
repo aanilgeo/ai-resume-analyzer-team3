@@ -13,3 +13,4 @@ python-docx
 
 # For testing
 pytest
+httpx

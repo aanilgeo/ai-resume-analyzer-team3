@@ -1,17 +1,16 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import dashboard
+
 from schemas.dashboard import ResumeUploadResponse
-from utils.storage import store_data, get_data, clear_data
+from backend.api import dashboard
+from backend.utils.storage import store_data, get_data, clear_data
+from backend.api.auth import get_router as auth_router_factory
 from utils.pdf_parser import extract_text_from_pdf
 from dotenv import load_dotenv
 from api.auth import get_router as auth_router_factory
 import os
 
-
 load_dotenv()
-
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 

@@ -1,6 +1,10 @@
+"""
+API endpoints to handle resume upload and job description along with validation
+"""
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from schemas.dashboard import ResumeUploadResponse
-
+from backend.schemas.dashboard import ResumeUploadResponse
+from backend.schemas.dashboard import JobDescriptionRequest
+from backend.utils.storage import store_data, get_data, clear_data
 from utils.pdf_parser import extract_text_from_pdf  # Import PDF parsing utility
 from utils.docx_parser import extract_text_from_docx  # Import DOCX parsing utility
 from io import BytesIO
@@ -8,21 +12,37 @@ from docx import Document
 import tempfile
 import time
 import os
-from utils.storage import temp_storage, store_data
-
-
 
 router = APIRouter()
 
-
 @router.post("/resume-upload", response_model=ResumeUploadResponse)
 async def upload_resume(resume_file: UploadFile = File(...)):
-    # Allow both PDF and DOCX file types
+    """
+    Allows successful resume uploading with PDF or docx file type
+    """
+    # Allow both PDF and docx file types
     allowed_content_types = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
-   
+    # Maximum file size = 2MB
+    maximum_file_size_allowed = 1024 * 1024 * 2
+
+    #Only PDF and docx file types allowed
     if resume_file.content_type not in allowed_content_types:
-        raise HTTPException(status_code=400, detail="Invalid file type. Only PDF and DOCX files are allowed.")
-   
+        raise HTTPException(status_code=400, detail={
+            "error": "Invalid file type. Only PDF or docx files are allowed.", 
+            "status": "error"
+            }
+        )
+    #Validate the file size
+    size_of_file = len(await resume_file.read())
+    if maximum_file_size_allowed < size_of_file:
+        raise HTTPException(status_code=400, detail={
+            "error": "File cannot exceed 2MB. Check file size.", 
+            "status": "error"
+            }
+        )
+    #Need to restart the file pointer since we re-read the file
+    await resume_file.seek(0)
+
     # Read the file content
     content = await resume_file.read()
     #print(f"Received {resume_file.filename}, content size: {len(content)} bytes")  # Debug print to check content size
@@ -53,25 +73,27 @@ async def upload_resume(resume_file: UploadFile = File(...)):
 
 
     # Store the extracted text content in temporary storage
-    store_data("temp_user", "resume_text", text_content) 
-    print(f"temp_storage after storing:{temp_storage}")
+    store_data("session_id_123", "resume_text", text_content)  # Replace "temp_user" with actual user identifier as needed
 
-    # To test loading
-    #time.sleep(5)
-
-
-    return {"message": "Resume uploaded successfully", "filename": resume_file.filename}
+    return {"message": "Resume uploaded successfully.", "status": "success"}
 
 
 @router.post("/job-description")
 async def handle_job_description(job_description: str = Form(...)):
+    """
+    Allows successful job description submission along with validation
+    """
+    #Description should not exceed 5000 characters
     if len(job_description) > 5000:
-        raise HTTPException(status_code=400, detail="Job description exceeds character limit.")
-    store_data("job_description", "temp_user", job_description)  # Placeholder user ID for demo
+        raise HTTPException(status_code=400, detail={
+            "error": "Job description exceeds character limit.", 
+            "status": "error"
+            }
+        )
+    
+    #Clean the text by removing extraneous whitespace
+    individual_words = job_description.split()
+    clean_description = " ".join(individual_words)
+    store_data("session_id_123", "job_description", clean_description)  # Placeholder user ID for demo
 
-
-    # To test loading
-    #time.sleep(5)
-
-
-    return {"message": "Job description received"}
+    return {"message": "Job description submitted successfully.", "status": "success"}
