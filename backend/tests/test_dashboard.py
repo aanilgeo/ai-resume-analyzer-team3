@@ -6,16 +6,24 @@ from io import BytesIO
 
 client = TestClient(app)
 
-# Test: Sucessful file upload (valid PDF) (Task 8, 10)
 def test_valid_pdf_file_upload():
     file_name = "test.pdf"
-    # Create valid pdf file using BytesIO to use in post request
-    temp_pdf_file = BytesIO(b"%PDF-1.7\n%...")
+    # Create valid PDF using reportlab
+    from reportlab.pdfgen import canvas
+    temp_pdf_file = BytesIO()
+    c = canvas.Canvas(temp_pdf_file)
+    c.drawString(100, 750, "This is a test PDF")
+    c.save()
+    temp_pdf_file.seek(0)
 
-    response = client.post("/api/resume-upload", files={"resume_file": (file_name, temp_pdf_file, "application/pdf")})
-    # 200 OK: Request succeeded
+    response = client.post(
+        "/api/resume-upload", 
+        files={"resume_file": (file_name, temp_pdf_file, "application/pdf")}
+    )
+    print(response.json())  # Debugging
     assert response.status_code == 200
     assert response.json() == {"message": "Resume uploaded successfully.", "status": "success"}
+
 
 # Test: Sucessful file upload (valid docx) (Task 8, 10)
 def test_valid_docx_file_upload():

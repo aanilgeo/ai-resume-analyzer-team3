@@ -5,12 +5,11 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from backend.schemas.dashboard import ResumeUploadResponse
 from backend.schemas.dashboard import JobDescriptionRequest
 from backend.utils.storage import store_data, get_data, clear_data
-from utils.pdf_parser import extract_text_from_pdf  # Import PDF parsing utility
-from utils.docx_parser import extract_text_from_docx  # Import DOCX parsing utility
+from backend.utils.pdf_parser import extract_text_from_pdf  # Import PDF parsing utility
+from backend.utils.docx_parser import extract_text_from_docx  # Import DOCX parsing utility
 from io import BytesIO
 from docx import Document
 import tempfile
-import time
 import os
 
 router = APIRouter()
