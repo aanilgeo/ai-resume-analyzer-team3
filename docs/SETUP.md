@@ -67,5 +67,9 @@
   npm install
   npm test
   ```
+  - To run the tests and generate a test coverage report:
+    ```bash
+    npm test -- --coverage
+    ```
 
 Thank you for setting up the project! For any questions, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) for guidance on collaborating.
