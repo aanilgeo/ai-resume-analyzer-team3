@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Dashboard.css'
-import LogoutButton from '../Auth/LogoutButton';
 
 const JobDescriptionInput = () => {
   const [jobDescription, setDescription] = useState('');
@@ -211,11 +210,8 @@ const JobDescriptionInput = () => {
           </>
       }
       <div>
-      <div className="header">
-          <h2>Dashboard</h2>
-          <LogoutButton className="logout-button" />
-        </div>
-        <p>Welcome to the user dashboard.</p>
+        <h2 role='title'>Dashboard</h2>
+        <p role='titleMessage'>Welcome to the user dashboard.</p>
       </div>
       <div>
         <form role='descriptionForm' onSubmit={handleSubmit}>
