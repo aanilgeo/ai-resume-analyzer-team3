@@ -14,3 +14,6 @@ python-docx
 # For testing
 pytest
 httpx
+
+pypdf
+reportlab
