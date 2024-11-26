@@ -8,6 +8,14 @@
       git clone https://github.com/aanilgeo/ai-resume-analyzer-team3.git
       cd ai-resume-analyzer-team3/
       ```
+   - Setup virtual environment:
+     ```bash
+     python3 -m venv myenv
+     ```
+   - Activate virtual environment:
+     ```bash
+     source myenv/bin/activate
+     ```
    - Install dependencies:
      ```bash
      sudo apt install python3-pip
@@ -55,6 +63,10 @@
    - Access the app at `http://localhost:3000`.
 
 ## Running Tests
+ `Note`: Before running backend tests, ensure that you are in the root directory and that your virtual environment is activated -
+ ```bash
+ source myenv/bin/activate
+ ```
 
 - **Backend**: Use `pytest` to run backend tests:
   ```bash
