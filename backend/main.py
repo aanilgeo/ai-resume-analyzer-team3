@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from backend.schemas.dashboard import ResumeUploadResponse
-from backend.api import dashboard
+from backend.api import dashboard, nlp
 from backend.utils.storage import store_data, get_data, clear_data
 from backend.api.auth import get_router as auth_router_factory
 from backend.utils.pdf_parser import extract_text_from_pdf
@@ -74,7 +73,7 @@ async def add_header(request, call_next):
 # Include routers for API endpoints
 app.include_router(auth_router_factory(SECRET_KEY), prefix="/api", tags=["auth"])
 app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
-
+app.include_router(nlp.router, prefix="/api", tags=["nlp"])
 
 # Run app with: `uvicorn main:app --reload`
 if __name__ == "__main__":
