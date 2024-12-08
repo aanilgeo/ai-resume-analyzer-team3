@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from backend.schemas.dashboard import ResumeUploadResponse
 from backend.api import dashboard
 from backend.utils.storage import store_data, get_data, clear_data
@@ -17,7 +16,7 @@ import secrets
 
 
 # Path to the .env file where secret key will be stored
-ENV_FILE_PATH = "../.env"
+ENV_FILE_PATH = "./.env"
 
 # Generate a secret key and store it in the .env folder 
 def generate_and_store_secret_key():
@@ -30,8 +29,10 @@ def generate_and_store_secret_key():
         # Write the key to the .env file
         with open(ENV_FILE_PATH, "w") as env_file:
             env_file.write(f"SECRET_KEY={secret_key}\n")
+            env_file.write("OPENAI_API_KEY=your-openai-key-here\n")
         
         print(f"Generated new SECRET_KEY and stored it in {ENV_FILE_PATH}")
+        print("Please replace 'your-openai-key-here' with your actual OpenAI API key")
     else:
         print(".env file found. Loading SECRET_KEY...")
 
@@ -72,7 +73,6 @@ async def add_header(request, call_next):
 # Include routers for API endpoints
 app.include_router(auth_router_factory(SECRET_KEY), prefix="/api", tags=["auth"])
 app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
-
 
 # Run app with: `uvicorn main:app --reload`
 if __name__ == "__main__":
