@@ -1,14 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.schemas.dashboard import ResumeUploadResponse
-from backend.api import dashboard
-from backend.utils.storage import store_data, get_data, clear_data
-from backend.api.auth import get_router as auth_router_factory
-from backend.utils.pdf_parser import extract_text_from_pdf
+from schemas.dashboard import ResumeUploadResponse
+from api import dashboard
+from utils.storage import store_data, get_data, clear_data
+from api.auth import get_router as auth_router_factory
+from utils.pdf_parser import extract_text_from_pdf
 from dotenv import load_dotenv
-from backend.api.auth import get_router as auth_router_factory
+from api.auth import get_router as auth_router_factory
 import os
 import sys
+
 # Add the backend directory (or project root) to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
