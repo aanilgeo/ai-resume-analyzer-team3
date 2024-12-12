@@ -6,6 +6,7 @@ from fastapi import File, Form
 # Pydantic model for the response after successful resume upload
 class ResumeUploadResponse(BaseModel):
     message: str
+    resume_text: str
     status: str
 
 # Pydantic model for the parsed resume content (placeholder for future parsing and analysis)
@@ -23,3 +24,24 @@ class JobDescriptionRequest(BaseModel):
 class JobDescriptionAnalysisResponse(BaseModel):
     keywords: list[str]  # Extracted keywords from the job description
     required_skills: list[str]  # List of required skills from the job description
+
+# Pydantic model for the fit score input request
+class FitScoreRequest(BaseModel):
+    resume_text: str # Resume text
+    job_description: str # Job description text
+
+# Pydantic model for the fit score input result
+class Feedback(BaseModel):
+    skills: list[str]
+    experience: list[str]
+    formatting: list[str]
+
+class FitScoreModel(BaseModel):
+    fit_score: int
+    skills: list[str]
+    keywords: list[str]
+    feedback: Feedback
+
+class FitScoreResponse(BaseModel):
+    feedback: FitScoreModel
+    status: str

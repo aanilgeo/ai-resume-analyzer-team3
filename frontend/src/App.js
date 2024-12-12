@@ -5,6 +5,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard';
 import Protected from './components/Auth/Protected';
+import './stylesheets/App.css';
 
 const App = () => {
   return (

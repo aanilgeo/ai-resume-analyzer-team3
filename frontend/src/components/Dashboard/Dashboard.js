@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import './Dashboard.css'
-import LogoutButton from '../Auth/LogoutButton';
+import '../../stylesheets/Navbar.css'
+import '../../stylesheets/Dashboard.css'
+import Navbar from '../Navbar';
+
+// For advanced user interface enhancements
+import { Markup } from 'interweave';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
 
 const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
@@ -10,12 +16,23 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [submittedDescription, setSubmittedDescription] = useState(false);
   const [submittedResume, setSubmittedResume] = useState(false);
-  const [fitScore, setFitScore] = useState(0);
-  const [skillsList, setSkillsList] = useState([]);
-  const [keywordsList, setKeywordsList] = useState([]);
-  const [improvementSuggestions, setImprovementSuggestions] = useState([]);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
 
-  var jobDescriptionLength = jobDescription.length
+  // Feedback state variables
+  const [fitScore, setFitScore] = useState(0);
+  const [skills, setSkills] = useState([]);
+  const [keywords, setKeywords] = useState([]);
+  const [skillsFeedback, setSkillsFeedback] = useState([]);
+  const [experienceFeedback, setExperienceFeedback] = useState([]);
+  const [formattingFeedback, setFormattingFeedback] = useState([]);
+  const [resumeText, setResumeText] = useState('');
+
+  // Feedback display variables
+  const [displaySkills, setDisplaySkills] = useState(true);
+  const [displayExperience, setDisplayExperience] = useState(true);
+  const [displayFormatting, setDisplayFormatting] = useState(true);
+
+  var jobDescriptionLength = jobDescription.length;
 
   // Handle job description uploads
   const handleSubmit = async (e) => {
@@ -29,20 +46,22 @@ const Dashboard = () => {
     else {
       setLoading(true)
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/job-description', {
+        await axios.post('http://127.0.0.1:8000/api/job-description', {
           'job_description': jobDescription
         }, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
+        }).then( response => {
+          setSubmittedDescription(true);
+          setMessage(response.data.message);
         });
-        setSubmittedDescription(true);
-        setMessage(response.data.message); // Display success message
       } catch (error) {
-        setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
+        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
         window.alert('There was a problem reaching the server, please try again later');
       }
     }
+    console.log(message);
     setLoading(false);
   };
 
@@ -66,25 +85,30 @@ const Dashboard = () => {
     else {
       setLoading(true)
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/resume-upload', {
+        await axios.post('http://127.0.0.1:8000/api/resume-upload', {
           'resume_file': resumeFile
         }, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
+        }).then( response => {
+          setSubmittedResume(true);
+          setMessage(response.data.message);
+          setResumeText(response.data.resume_text);
         });
-        setSubmittedResume(true);
-        setMessage(await response.data.message); // Display success message
       } catch (error) {
-        setMessage(await error.response?.data?.detail || 'An error occurred'); // Display error message
+        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
         window.alert('There was a problem reaching the server, please try again later');
       }
     }
+    console.log(message);
     setLoading(false);
   };
 
   // For double-checking logic on description entry
   function changeDescription(e) {
+    setFeedbackVisible(false)
+    document.getElementById('feedback').classList.add('hidden');
     if (jobDescription.length > 5000) {
       alert('Job description cannot exceed 5000 characters');
     }
@@ -95,6 +119,8 @@ const Dashboard = () => {
 
   // For double-checking logic on file upload
   function changeFile(e) {
+    setFeedbackVisible(false)
+    document.getElementById('feedback').classList.add('hidden');
     if (e.target.files[0] === null) {
       alert('File is null');
     }
@@ -117,7 +143,9 @@ const Dashboard = () => {
   };
 
   // Animation for fit score percentage bar
-  function checkProgress(progress) {
+  function setProgress(progress) {
+    setFitScore(progress)
+    console.log(fitScore)
     var i = 0;
     if (i === 0) {
       i = 1;
@@ -147,71 +175,86 @@ const Dashboard = () => {
     }
   }
 
-  // Placeholder function to get feedback
-  function getFeedback() {
-    if (submittedDescription && submittedResume) {
-      const mockdata = [
-        {
-          'fitScore': 15,
-          'skillsList': ['Skill0'],
-          'keywordsList': ['Keyword0'],
-          'feedbackList': {
-            'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'experience': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'] 
-          },
-          // Do not use below line when making json in backend, below is antiquated json format for testing only so it doesn't crash
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.']
-        },
-        {
-          'fitScore': 65,
-          'skillsList': ['Skill0', 'Skill1', 'Skill5'],
-          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6'],
-          'feedbackList': {
-            'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'experience': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'] 
-          },
-          // Do not use below line when making json in backend, below is antiquated json format for testing only so it doesn't crash
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.']
-        },
-        {
-          'fitScore': 85,
-          'skillsList': ['Skill0', 'Skill1', 'Skill5', 'Skill6'],
-          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6', 'Keyword9'],
-          'feedbackList': {
-            'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'experience': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-            'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'] 
-          },
-          // Do not use below line when making json in backend, below is antiquated json format for testing only so it doesn't crash
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.']
-        }
-      ]
+  function getHighlightedResume() {
+    var highlightedResume = resumeText;
+    keywords.forEach( keyword => {
+      const pattern = keyword;
+      const re = new RegExp(pattern, 'gi');
+      highlightedResume = highlightedResume.replace(re, (x) => `<b style='background-color: #3333ff55;'>${x}</b>`);
+    })
+    skills.forEach( skill => {
+      const pattern = skill;
+      const re = new RegExp(pattern, 'gi');
+      highlightedResume = highlightedResume.replace(re, (x) => `<b style='background-color: #cc990055;'>${x}</b>`);
+    })
+    highlightedResume.replace('\n', '<br/>')
+    return <Markup content={highlightedResume} allowAttributes='true'/>;
+  }
 
-      // Currently looks at the job description to determine what mock data to use
-      var feedback = mockdata[2];
-      if (jobDescription.includes("poor")) {
-        feedback = mockdata[0];
-      } else if (jobDescription.includes("average")) {
-        feedback = mockdata[1];
+  // Gets feedback from backend analyzer
+  async function getFeedback()  {
+    if (submittedDescription && submittedResume && resumeText && jobDescription) {
+      setLoading(true)
+      var d = {
+        'resume_text': resumeText,
+        'job_description': jobDescription
       }
+      try {
+        await axios.post('http://127.0.0.1:8000/api/fit-score', d, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then( response => {
+          setMessage(response.data.message); // Display success message
+  
+          // Set state variables assuming properly formed json response
+          setProgress(response.data.feedback.fit_score);
+          setSkills(response.data.feedback.skills);
+          setKeywords(response.data.feedback.keywords);
+          setSkillsFeedback(response.data.feedback.feedback.skills);
+          setExperienceFeedback(response.data.feedback.feedback.experience);
+          setFormattingFeedback(response.data.feedback.feedback.formatting);
+        });
 
-      setFitScore(feedback.fitScore);
-      checkProgress(feedback.fitScore);
-      setSkillsList(feedback.skillsList);
-      setKeywordsList(feedback.keywordsList);
-      setImprovementSuggestions(feedback.improvementSuggestions);
-
-      // Unhide results area
-      document.getElementById('feedback').classList.remove('hidden')
+        // Unhide results area
+        document.getElementById('feedback').classList.remove('hidden');
+        setFeedbackVisible(true)
+      } catch (error) {
+        setMessage(await `An error occurred: ${error.response?.data?.detail}`); // Display error message
+        window.alert('There was a problem reaching the server, please try again later');
+      }
+      setLoading(false)
     } else {
-      alert('Please submit job description and resume to get feedback')
+      alert('Please ensure job description and resume are submitted, otherwise, your job description or resume might be empty. Please try again.')
     }
   };
 
+  // Downloads resulting feedback report as pdf
+  async function downloadReport()  {
+    // Logic to covert report to pdf and download report here
+    alert('Downloading PDF...')
+  };
+
+  // Tippy for tooltips on suggestionlists
+  new tippy('#skillSuggestionsListItem',{
+    position:'top',
+    animation:'scale',
+    arrow:'true'
+  });
+  new tippy('#experienceSuggestionListItem',{
+    position:'top',
+    animation:'scale',
+    arrow:'true'
+  });
+  new tippy('#formattingSuggestionListItem',{
+    position:'top',
+    animation:'scale',
+    arrow:'true'
+  });
+
   return (
     <>
+      <Navbar activeTab='dashboard'/>
       {
         loading &&
           <>
@@ -228,132 +271,171 @@ const Dashboard = () => {
             </div>
           </>
       }
-      <div>
-        <h2 role='title'>Dashboard</h2>
-        <LogoutButton className="logout-button" />
-        <p role='titleMessage'>Welcome to the user dashboard.</p>
-      </div>
-      <div>
-        <form role='descriptionForm' onSubmit={handleSubmit}>
-          <h5 role='descriptionLabel'>Job Description: {submittedDescription && '✅'}</h5>
-          <div>
-            <textarea
-              title='Job Description Submission'
-              id='descriptionUpload'
-              role='descriptionInput'
-              placeholder='Input the details of the job here...'
-              value={jobDescription}
-              onClick={() => setSubmittedDescription(false)}
-              onChange={(e) => changeDescription(e.target.value)}
-              rows='6'
-              maxLength={5000}
-              required
-            />
-            <div role='descriptionCharacterLength'>
-            {
-              jobDescriptionLength > 4500 ? 
-              <>
-                {
-                  jobDescriptionLength >= 5000 ?
-                  <>
-                    (5000 / 5000 max.) 🛑
-                  </>
-                  :
-                  <>
-                    ({jobDescriptionLength} / 5000 max.) ⚠
-                  </>
-                }
-              </>
-              :
-              <>
-                ({jobDescriptionLength} / 5000 max.)
-              </>
-            }
+      <div id='hp'>
+        <h2 role='title'>Dashboard:</h2>
+        <div className='dashboardForm'>
+          <form role='descriptionForm' onSubmit={handleSubmit}>
+            <h5 role='descriptionLabel'>Job Description: {submittedDescription && '✅'}</h5>
+            <div>
+              <textarea
+                title='Job Description Submission'
+                id='descriptionUpload'
+                role='descriptionInput'
+                placeholder='Input the details of the job here...'
+                value={jobDescription}
+                onChange={(e) => changeDescription(e.target.value)}
+                rows='6'
+                maxLength={5000}
+                required
+              />
+              <div id='descriptionCharacterLength' role='descriptionCharacterLength'>
+              {
+                jobDescriptionLength > 4500 ? 
+                <>
+                  {
+                    jobDescriptionLength >= 5000 ?
+                    <>
+                      (5000 / 5000 max.) 🛑
+                    </>
+                    :
+                    <>
+                      ({jobDescriptionLength} / 5000 max.) ⚠
+                    </>
+                  }
+                </>
+                :
+                <>
+                  ({jobDescriptionLength} / 5000 max.)
+                </>
+              }
+              </div>
             </div>
-          </div>
+            <br/>
+            <div>
+              {
+                submittedDescription ?
+                <button role='descriptionButton' type='submit'>Resubmit Description</button>
+                :
+                <button role='descriptionButton' type='submit'>Submit Description</button>
+              }
+            </div>
+          </form>
+          <form role='fileForm' onSubmit={handleUpload}>
+            <h5 role='fileLabel'>Resume Upload: {submittedResume && '✅'}</h5>
+            <div>
+              <input
+                title='Resume File Upload'
+                id='fileUpload'
+                role='fileInput'
+                type='file'
+                placeholder='N/A'
+                onChange={(e) => changeFile(e)}
+                required
+              />
+            </div>
+            <br/>
+            <div>
+              {
+                submittedResume ?
+                <button role='fileButton' type='submit'>Reupload Resume</button>
+                :
+                <button role='fileButton' type='submit'>Upload Resume</button>
+              }
+            </div>
+          </form>
           <br/>
-          <div>
-            {
-              submittedDescription ?
-              <button role='descriptionButton' type='submit'>Resubmit Description</button>
-              :
-              <button role='descriptionButton' type='submit'>Submit Description</button>
-            }
-          </div>
-        </form>
-        <form role='fileForm' onSubmit={handleUpload}>
-          <h5 role='fileLabel'>Resume Upload: {submittedResume && '✅'}</h5>
-          <div>
-            <input
-              title='Resume File Upload'
-              id='fileUpload'
-              role='fileInput'
-              type='file'
-              placeholder='N/A'
-              onClick={() => setSubmittedResume(false)}
-              onChange={(e) => changeFile(e)}
-              required
-            />
-          </div>
-          <br/>
-          <div>
-            {
-              submittedResume ?
-              <button role='fileButton' type='submit'>Reupload Resume</button>
-              :
-              <button role='fileButton' type='submit'>Upload Resume</button>
-            }
-          </div>
-        </form>
-        <br/>
-        {(submittedDescription && submittedResume) &&
-        <button 
-          type='submit'
-          role='feedbackButton'
-          onClick={getFeedback}
-          >
+        </div>
+        {(submittedDescription && submittedResume && !feedbackVisible) &&
+          <button 
+            type='submit'
+            role='feedbackButton'
+            className='feedbackButton'
+            onClick={getFeedback}
+            >
             Get Feedback
-        </button>
+          </button>
         }
-      </div>
-      <br/>
-        <div role='results' id='feedback' className='hidden'>
-          <h4 role='resultsTitle'>Results:</h4>
-          <h5 role='fitScoreLabel'>Resume Fit Score:</h5>
-          <div role='progressBar' id='progressBar'>
-            <div role='progressLabel' id='progressLabel'>0%</div>
+        <br/>
+          <div role='results' id='feedback' className='hidden'>
+            <h4 role='resultsTitle'>Results:</h4>
+            <h5 role='fitScoreLabel'>Fit Score:</h5>
+            <div id='progressBackground'>
+              <div role='progressBar' id='progressBar'>
+                <div role='progressLabel' id='progressLabel'>0%</div>
+              </div>
+            </div>
+            <div id='cols'>
+              <div className='col'>
+              <h5 role='skillsTitle'>Matched Skills:</h5>
+              <ul role='skills'>
+                {skills.map((item, index) => {
+                  return <li role='skillsItem' key={index}>{item}</li>
+                  }
+                )}
+              </ul>
+              </div>
+              <div className='col'>
+              <h5 role='keywordsTitle'>Matched Keywords:</h5>
+              <ul role='keywords'>
+                {keywords.map((item, index) => {
+                  return <li role='keywordsItem' key={index}>{item}</li>
+                  }
+                )}
+              </ul>
+              </div>
+            </div>
+            <h5 role='suggestionsTitle'>Improvement Suggestions:</h5>
+            <form className='checkboxes'>
+              <input id='skillsBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplaySkills(!displaySkills)}></input>
+              <label>Skills</label>
+              <input id='experienceBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayExperience(!displayExperience)}></input>
+              <label>Experience</label>
+              <input id='formattingBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayFormatting(!displayFormatting)}></input>
+              <label>Formatting</label>
+            </form>
+            {((displaySkills && skillsFeedback.length)
+              || 
+              (displayExperience && experienceFeedback.length)
+              || 
+              (displayFormatting && formattingFeedback.length)) ?
+              <ul role='suggestionsList' className='suggestionsList tooltip'>
+              { displaySkills && <>
+                {skillsFeedback.map((item, index) => {
+                  return <li role='skillSuggestionsListItem' id='skillSuggestionsListItem' title='This is a skill suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              { displayExperience && <>
+                {experienceFeedback.map((item, index) => {
+                  return <li role='experienceSuggestionsListItem' id='experienceSuggestionsListItem' title='This is an experience suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              { displayFormatting && <>
+                {formattingFeedback.map((item, index) => {
+                  return <li role='formattingSuggestionsListItem' id='formattingSuggestionsListItem' title='This is a formatting suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              </ul>
+              :
+              <ul className='suggestionsList'>
+                <li>
+                  No suggestion items match filter selection
+                </li>
+              </ul>
+            }
+            <h5 role='suggestionsTitle'>Textual Resume With Matched {
+              <b style={{'background-color': '#cc990055'}}>Skills</b>
+              } and {
+              <b style={{'background-color': '#3333ff55'}}>Keywords</b>
+              }:
+            </h5>
+            <p id='displayResume'>
+              {getHighlightedResume()}
+            </p>
+            <button className='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
           </div>
-          <h5 role='skillsTitle'>Matched Skills:</h5>
-          <ul role='skillsList'>
-            {skillsList.map((skill, index) => {
-              return <li role='skillsListItem' key={index}>{skill}</li>
-              }
-            )}
-          </ul>
-          <h5 role='keywordsTitle'>Matched Keywords:</h5>
-          <ul role='keywordsList'>
-            {keywordsList.map((keyword, index) => {
-              return <li role='keywordsListItem' key={index}>{keyword}</li>
-              }
-            )}
-          </ul>
-          <h5 role='suggestionsTitle'>Improvement Suggestions:</h5>
-          <ul role='suggestionsList'>
-            {improvementSuggestions.map((feedbackItem, index) => {
-              return <li role='suggestionsListItem' key={index}>{feedbackItem}</li>
-              }
-            )}
-          </ul>
-          {/*
-          <ul role='suggestionsList'>
-            {improvementSuggestions.values().map((feedbackItemList) => {
-              feedbackItemList.map((feedbackItem, index) => {
-                return <li role='suggestionsListItem' key={index}>{feedbackItem}</li>
-                }
-            )}
-            )}
-          </ul>*/
-          }
         </div>
     </>
   );
