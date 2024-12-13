@@ -77,8 +77,8 @@ def test_successful_text_input_submission():
 
 # Test: Failed text input submission (Task 8, 10)
 def test_failed_text_input_submission():
-    # Exceeds maximum character count (5000)
-    invalid_character_count = 5000 + 1
+    # Exceeds maximum character count (10000)
+    invalid_character_count = 10000 + 1
     # Create a dummy string
     temp_str = "a" * invalid_character_count
     # Need data parameter to send FORM data

@@ -56,6 +56,7 @@ async def upload_resume(resume_file: UploadFile = File(...)):
                 temp_file_path = temp_file.name
             # Extract text from PDF using the utility function
             text_content = extract_text_from_pdf(temp_file_path)
+            print(text_content)
             os.remove(temp_file_path)  # Clean up the temporary file after extracting text
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
@@ -82,8 +83,8 @@ async def handle_job_description(job_description: str = Form(...)):
     """
     Allows successful job description submission along with validation
     """
-    #Description should not exceed 5000 characters
-    if len(job_description) > 5000:
+    #Description should not exceed 10000 characters
+    if len(job_description) > 10000:
         raise HTTPException(status_code=400, detail={
             "error": "Job description exceeds character limit.", 
             "status": "error"
