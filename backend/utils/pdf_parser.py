@@ -14,8 +14,6 @@ def extract_text_from_pdf(pdf_path: str, page_range: tuple = None) -> str:
         return text.strip().replace('\n', ' ') #Normalize line breaks
     except Exception as e:
         raise ValueError(f"Error reading PDF file '{pdf_path}': {str(e)}")
-        
-
 
 
 
