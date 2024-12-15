@@ -9,6 +9,8 @@ import { Markup } from 'interweave';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 
+import jsPDF from 'jspdf';
+
 const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
   const [resumeFile, setFile] = useState(null);
@@ -17,6 +19,7 @@ const Dashboard = () => {
   const [submittedResume, setSubmittedResume] = useState(false);
 
   // Feedback state variables
+  const [fitScore, setFitScore] = useState(0);
   const [skills, setSkills] = useState([]);
   const [keywords, setKeywords] = useState([]);
   const [skillsFeedback, setSkillsFeedback] = useState([]);
@@ -135,6 +138,7 @@ const Dashboard = () => {
 
   // Animation for fit score percentage bar
   function setProgress(progress) {
+    setFitScore(progress)
     var i = 0;
     if (i === 0) {
       i = 1;
@@ -233,10 +237,80 @@ const Dashboard = () => {
     }
   };
 
-  // Downloads resulting feedback report as pdf
-  async function downloadReport()  {
-    // Logic to covert report to pdf and download report here
-    alert('Downloading PDF...')
+  // Helper function for downloadReport()
+  const addTextWithOverflow = (doc, text, x, y, maxWidth, lineHeight, margin) => {
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const lines = doc.splitTextToSize(text, maxWidth);
+
+    lines.forEach((line) => {
+      if (y + lineHeight > pageHeight - margin) {
+        doc.addPage();
+        y = margin; // Reset y to margin on new page
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+
+    return y; // Return the updated y position
+  };
+
+  const downloadReport = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      const lineHeight = 10;
+      const maxWidth = pageWidth - 2 * margin; // Maximum text width
+      let y = margin;
+
+      // Title
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(24);
+      y = addTextWithOverflow(doc, 'Resume Analysis Report', margin, y, maxWidth, lineHeight, margin);
+
+      // Fit Score
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(16);
+      y = addTextWithOverflow(doc, `Fit Score: ${fitScore}`, margin, y, maxWidth, lineHeight, margin);
+
+      // Keywords Section
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Matched Keywords:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      keywords.forEach((keyword) => {
+        y = addTextWithOverflow(doc, `- ${keyword}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Skills Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Skills:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      skillsFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Experience Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Experience:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      experienceFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Formatting Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Formatting:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      formattingFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Save PDF
+      doc.save('Resume_Analysis_Report.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error.message);
+      alert('Failed to generate PDF. Please try again.');
+    }
   };
 
   // Tippy for tooltips on suggestionlists

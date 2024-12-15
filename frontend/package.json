@@ -8,6 +8,8 @@
     "@testing-library/user-event": "^14.5.2",
     "axios": "^0.27.2",
     "interweave": "^13.1.0",
+    "jest-canvas-mock": "^2.5.2",
+    "jspdf": "^2.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
