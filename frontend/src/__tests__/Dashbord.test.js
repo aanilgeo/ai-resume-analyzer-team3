@@ -8,7 +8,7 @@ import axios from 'axios'
 jest.mock('axios');
 
 window.alert = jest.fn();
-/*
+
 //-----------------------------------------------------------------------------
 // Task 9
 //-----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ it('Verify that all dashboard elements render correctly - baseline', async () =>
         expect(screen.getByRole('fileButton')).toBeInTheDocument();
     });
 });
-*/
+
 // Test 2
 it('Verify that all dashboard elements render correctly - post feedback - poor fit', async () => {
     render(
@@ -397,7 +397,7 @@ it('Verify that all dashboard elements render correctly - post feedback - poor f
     var file = blob;
 
     // Create a description to submit
-    var description = "This is the job description (expected poor fit)";
+    var description = "This is the job description";
 
     const fileInput = screen.getByRole('fileInput');
     const fileForm = screen.getByRole('fileForm');
@@ -537,7 +537,7 @@ it('Verify that all dashboard elements render correctly - post feedback - averag
     var file = blob;
 
     // Create a description to submit
-    var description = "This is the job description (expected poor fit)";
+    var description = "This is the job description";
 
     const fileInput = screen.getByRole('fileInput');
     const fileForm = screen.getByRole('fileForm');
@@ -677,7 +677,7 @@ it('Verify that all dashboard elements render correctly - post feedback - good f
     var file = blob;
 
     // Create a description to submit
-    var description = "This is the job description (expected poor fit)";
+    var description = "This is the job description";
 
     const fileInput = screen.getByRole('fileInput');
     const fileForm = screen.getByRole('fileForm');
@@ -813,7 +813,7 @@ it('Test that the loading spinner appears during API requests', async () => {
             <Dashboard />
         </MemoryRouter>
     );
-    
+
     axios.post.mockResolvedValue({'data': {'message': 'Resume uploaded successfully.', 'resume_text': 'This is the resume text'}, 'status': 'success'});
 
     // Create a file to submit
@@ -839,4 +839,84 @@ it('Test that the loading spinner appears during API requests', async () => {
     });
 
     expect(screen.queryByRole('loadingSpinner')).not.toBeInTheDocument();
+});
+
+//-----------------------------------------------------------------------------
+// Misc Error Coverage
+//-----------------------------------------------------------------------------
+
+// Test 1
+it('Verify that all dashboard elements render correctly - good fit', async () => {
+    render(
+        // MemoryRouter simulates navigation and routing behavior
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <Dashboard />
+        </MemoryRouter>
+    );
+
+    // Create a file to submit
+    var blob = new Blob([''], { type: 'application/pdf' });
+    blob['lastModifiedDate'] = '11.26.2024';
+    blob['name'] = 'resume.pdf';
+    var file = blob;
+
+    // Create a description to submit
+    var description = "This is the job description";
+
+    const fileInput = screen.getByRole('fileInput');
+    const fileForm = screen.getByRole('fileForm');
+
+    const descriptionInput = screen.getByRole('descriptionInput');
+    const descriptionForm = screen.getByRole('descriptionForm');
+
+    jest.resetAllMocks()
+    axios.post.mockResolvedValue({'data': {'message': 'Resume uploaded successfully.', 'resume_text': 'This is the resume text'}, 'status': 'success'});
+
+    await user.upload(fileInput, file);
+    
+    act(() => {
+        fireEvent.submit(fileForm);
+    });
+
+    await waitFor(() => {
+        expect(axios.post).toHaveBeenCalled();
+    });
+
+    expect(window.alert).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+        expect(screen.getByText('Resume Upload: ✅')).toBeInTheDocument();
+        expect(screen.getByText('Resume Text Received')).toBeInTheDocument();
+    });
+
+    jest.resetAllMocks()
+    axios.post.mockResolvedValue({'data': {'message': 'Job description submitted successfully.'}, 'status': 'success'});
+
+    act(() => {
+        fireEvent.change(descriptionInput, { target: { value: description } });
+        fireEvent.submit(descriptionForm);
+    });
+
+    await waitFor(() => {
+        expect(axios.post).toHaveBeenCalled();
+    });
+
+    expect(window.alert).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+        expect(screen.getByText('Job Description: ✅')).toBeInTheDocument();
+    })
+    
+    jest.resetAllMocks()
+    axios.post.mockRejectedValueOnce();
+
+    act( () => {
+        fireEvent.click(screen.getByRole('feedbackButton'));
+    });
+
+    await waitFor(() => {
+        expect(axios.post).toHaveBeenCalled();
+    });
+
+    expect(window.alert).toHaveBeenCalled();
 });

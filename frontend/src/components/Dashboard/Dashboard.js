@@ -12,13 +12,11 @@ import 'tippy.js/dist/tippy.css'; // optional for styling
 const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
   const [resumeFile, setFile] = useState(null);
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submittedDescription, setSubmittedDescription] = useState(false);
   const [submittedResume, setSubmittedResume] = useState(false);
 
   // Feedback state variables
-  const [fitScore, setFitScore] = useState(0);
   const [skills, setSkills] = useState([]);
   const [keywords, setKeywords] = useState([]);
   const [skillsFeedback, setSkillsFeedback] = useState([]);
@@ -51,16 +49,13 @@ const Dashboard = () => {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        }).then( response => {
+        }).then( () => {
           setSubmittedDescription(true);
-          setMessage(response.data.message);
         });
       } catch (error) {
-        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
-        alert('There was a problem reaching the server, please try again later');
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Unknown'}`);
       }
     }
-    //console.log(message);
     setLoading(false);
   };
 
@@ -92,15 +87,12 @@ const Dashboard = () => {
           }
         }).then( response => {
           setSubmittedResume(true);
-          setMessage(response.data.message);
           setResumeText(response.data.resume_text);
         });
       } catch (error) {
-        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
-        alert('There was a problem reaching the server, please try again later');
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Unknown'}`);
       }
     }
-    //console.log(message);
     setLoading(false);
   };
 
@@ -143,8 +135,6 @@ const Dashboard = () => {
 
   // Animation for fit score percentage bar
   function setProgress(progress) {
-    setFitScore(progress)
-    //console.log(fitScore)
     var i = 0;
     if (i === 0) {
       i = 1;
@@ -175,19 +165,21 @@ const Dashboard = () => {
   }
 
   function getHighlightedResume() {
-    var highlightedResume = resumeText;
-    keywords.forEach( keyword => {
-      const pattern = keyword;
-      const re = new RegExp(pattern, 'gi');
-      highlightedResume = highlightedResume.replace(re, (x) => `<b style='background-color: #3333ff55;'>${x}</b>`);
-    })
-    skills.forEach( skill => {
-      const pattern = skill;
-      const re = new RegExp(pattern, 'gi');
-      highlightedResume = highlightedResume.replace(re, (x) => `<b style='background-color: #cc990055;'>${x}</b>`);
-    })
-    highlightedResume.replace('\n', '<br/>')
-    return <Markup role='highlightedResume' content={highlightedResume} allowAttributes='true'/>;
+    if (resumeText) {
+      var highlightedResume = resumeText;
+      skills.forEach( skill => {
+        const pattern = skill;
+        const re = new RegExp(pattern, 'gi');
+        highlightedResume = highlightedResume.replace(re, (x) => `<b role='highlightedSkill' style='background-color:rgba(204, 153, 0, 0.33);'>${x}</b>`);
+      })
+      keywords.forEach( keyword => {
+        const pattern = keyword;
+        const re = new RegExp(pattern, 'gi');
+        highlightedResume = highlightedResume.replace(re, (x) => `<b role='highlightedKeyword' style='background-color:rgba(51, 51, 255, 0.33);'>${x}</b>`);
+      })
+      highlightedResume.replace('\n', '<br/>')
+      return <Markup role='highlightedResume' content={highlightedResume} allowAttributes='true'/>;
+    }
   }
 
   // Gets feedback from backend analyzer
@@ -204,23 +196,36 @@ const Dashboard = () => {
             'Content-Type': 'application/json'
           }
         }).then( response => {
-          setMessage(response.data.message); // Display success message
-  
-          // Set state variables assuming properly formed json response
-          setProgress(response.data.feedback.fit_score);
-          setSkills(response.data.feedback.skills);
-          setKeywords(response.data.feedback.keywords);
-          setSkillsFeedback(response.data.feedback.feedback.skills);
-          setExperienceFeedback(response.data.feedback.feedback.experience);
-          setFormattingFeedback(response.data.feedback.feedback.formatting);
+          // Set state variables assuming properly formed json response where possible
+
+          if (response.data.feedback.fit_score) {
+            setProgress(response.data.feedback.fit_score);
+          } else {
+            setProgress(0);
+          }
+
+          if (response.data.feedback.skills?.filter(Boolean).length) {
+            setSkills(response.data.feedback.skills.filter(Boolean));
+          } else {
+            setSkills(['No matched skills']);
+          }
+          if (response.data.feedback.keywords?.filter(Boolean).length) {
+            setKeywords(response.data.feedback.keywords.filter(Boolean));
+          } else {
+            setKeywords(['No matched keywords']);
+          }
+
+          if (response.data.feedback.feedback) {
+            setSkillsFeedback(response.data.feedback.feedback.skills?.filter(Boolean) || []);
+            setExperienceFeedback(response.data.feedback.feedback.experience?.filter(Boolean) || []);
+            setFormattingFeedback(response.data.feedback.feedback.formatting?.filter(Boolean) || []);
+          }
         });
 
         // Unhide results area
         document.getElementById('feedback').classList.remove('hidden');
       } catch (error) {
-        alert(`${submittedDescription} ${submittedResume} ${resumeText} ${jobDescription}`)
-        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
-        alert('There was a problem reaching the server, please try again later');
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Uknown'}`);
       }
       setLoading(false)
     } else {
@@ -388,12 +393,12 @@ const Dashboard = () => {
             </div>
             <h5 role='suggestionsTitle'>Improvement Suggestions:</h5>
             <form className='checkboxes'>
-              <input id='skillsBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplaySkills(!displaySkills)}></input>
-              <label>Skills</label>
-              <input id='experienceBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayExperience(!displayExperience)}></input>
-              <label>Experience</label>
-              <input id='formattingBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayFormatting(!displayFormatting)}></input>
-              <label>Formatting</label>
+              <input role='skillsBox' id='skillsBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplaySkills(!displaySkills)}></input>
+              <label role='skillsBoxLabel'>Skills</label>
+              <input role='experienceBox' id='experienceBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayExperience(!displayExperience)}></input>
+              <label role='experienceBoxLabel'>Experience</label>
+              <input role='formattingBox' id='formattingBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayFormatting(!displayFormatting)}></input>
+              <label role='formattingBoxLabel'>Formatting</label>
             </form>
             {((displaySkills && skillsFeedback.length)
               || 
@@ -421,22 +426,22 @@ const Dashboard = () => {
               </> }
               </ul>
               :
-              <ul className='suggestionsList'>
-                <li>
-                  No suggestion items match filter selection
+              <ul role='suggestionsList' className='suggestionsList'>
+                <li role='suggestionListEmpty'>
+                  No suggestion items found
                 </li>
               </ul>
             }
             <h5 role='highlightedResumeTitle'>Textual Resume With Matched {
-              <b style={{backgroundColor: '#cc990055'}}>Skills</b>
+              <b style={{backgroundColor: '#cc990055', role: 'skillMatch'}}>Skills</b>
               } and {
-              <b style={{backgroundColor: '#3333ff55'}}>Keywords</b>
+              <b style={{backgroundColor: '#3333ff55', role: 'keywordMatch'}}>Keywords</b>
               }:
             </h5>
-            <p id='displayResume'>
+            <p role='displayResume' id='displayResume'>
               {getHighlightedResume()}
             </p>
-            <button className='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
+            <button className='downloadButton' role='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
           </div>
         </div>
     </>

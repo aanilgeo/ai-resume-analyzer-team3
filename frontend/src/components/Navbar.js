@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Navbar = ({activeTab = 'home'}) => {
+const Navbar = ({activeTab}) => {
   if (activeTab === 'home') var homeClass = 'active'; else homeClass = '';
   if (activeTab === 'login') var loginClass = 'active'; else loginClass = '';
   if (activeTab === 'register') var registerClass = 'active'; else registerClass = '';
