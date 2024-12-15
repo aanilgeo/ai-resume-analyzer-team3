@@ -16,7 +16,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [submittedDescription, setSubmittedDescription] = useState(false);
   const [submittedResume, setSubmittedResume] = useState(false);
-  const [feedbackVisible, setFeedbackVisible] = useState(false);
 
   // Feedback state variables
   const [fitScore, setFitScore] = useState(0);
@@ -40,11 +39,11 @@ const Dashboard = () => {
     if (jobDescription === '') {
       alert('Please fill out the job description, job description cannot be empty');
     }
-    else if (jobDescription.length > 5000) {
-      alert('Job description cannot exceed 5000 characters');
+    else if (jobDescription.length > 10000) {
+      alert('Job description cannot exceed 10000 characters');
     }
     else {
-      setLoading(true)
+      setLoading(true);
       try {
         await axios.post('http://127.0.0.1:8000/api/job-description', {
           'job_description': jobDescription
@@ -58,10 +57,10 @@ const Dashboard = () => {
         });
       } catch (error) {
         setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
-        window.alert('There was a problem reaching the server, please try again later');
+        alert('There was a problem reaching the server, please try again later');
       }
     }
-    console.log(message);
+    //console.log(message);
     setLoading(false);
   };
 
@@ -83,7 +82,7 @@ const Dashboard = () => {
       alert('File size must be smaller than 2MB');
     }
     else {
-      setLoading(true)
+      setLoading(true);
       try {
         await axios.post('http://127.0.0.1:8000/api/resume-upload', {
           'resume_file': resumeFile
@@ -98,19 +97,19 @@ const Dashboard = () => {
         });
       } catch (error) {
         setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
-        window.alert('There was a problem reaching the server, please try again later');
+        alert('There was a problem reaching the server, please try again later');
       }
     }
-    console.log(message);
+    //console.log(message);
     setLoading(false);
   };
 
   // For double-checking logic on description entry
   function changeDescription(e) {
-    setFeedbackVisible(false)
+    setSubmittedDescription(false)
     document.getElementById('feedback').classList.add('hidden');
-    if (jobDescription.length > 5000) {
-      alert('Job description cannot exceed 5000 characters');
+    if (jobDescription.length > 10000) {
+      alert('Job description cannot exceed 10000 characters');
     }
     else {
       setDescription(e)
@@ -119,7 +118,7 @@ const Dashboard = () => {
 
   // For double-checking logic on file upload
   function changeFile(e) {
-    setFeedbackVisible(false)
+    setSubmittedResume(false)
     document.getElementById('feedback').classList.add('hidden');
     if (e.target.files[0] === null) {
       alert('File is null');
@@ -145,7 +144,7 @@ const Dashboard = () => {
   // Animation for fit score percentage bar
   function setProgress(progress) {
     setFitScore(progress)
-    console.log(fitScore)
+    //console.log(fitScore)
     var i = 0;
     if (i === 0) {
       i = 1;
@@ -188,7 +187,7 @@ const Dashboard = () => {
       highlightedResume = highlightedResume.replace(re, (x) => `<b style='background-color: #cc990055;'>${x}</b>`);
     })
     highlightedResume.replace('\n', '<br/>')
-    return <Markup content={highlightedResume} allowAttributes='true'/>;
+    return <Markup role='highlightedResume' content={highlightedResume} allowAttributes='true'/>;
   }
 
   // Gets feedback from backend analyzer
@@ -218,10 +217,10 @@ const Dashboard = () => {
 
         // Unhide results area
         document.getElementById('feedback').classList.remove('hidden');
-        setFeedbackVisible(true)
       } catch (error) {
-        setMessage(await `An error occurred: ${error.response?.data?.detail}`); // Display error message
-        window.alert('There was a problem reaching the server, please try again later');
+        alert(`${submittedDescription} ${submittedResume} ${resumeText} ${jobDescription}`)
+        setMessage(`An error occurred: ${error.response?.data?.detail}`); // Display error message
+        alert('There was a problem reaching the server, please try again later');
       }
       setLoading(false)
     } else {
@@ -237,17 +236,14 @@ const Dashboard = () => {
 
   // Tippy for tooltips on suggestionlists
   new tippy('#skillSuggestionsListItem',{
-    position:'top',
     animation:'scale',
     arrow:'true'
   });
   new tippy('#experienceSuggestionListItem',{
-    position:'top',
     animation:'scale',
     arrow:'true'
   });
   new tippy('#formattingSuggestionListItem',{
-    position:'top',
     animation:'scale',
     arrow:'true'
   });
@@ -285,27 +281,27 @@ const Dashboard = () => {
                 value={jobDescription}
                 onChange={(e) => changeDescription(e.target.value)}
                 rows='6'
-                maxLength={5000}
+                maxLength={10000}
                 required
               />
               <div id='descriptionCharacterLength' role='descriptionCharacterLength'>
               {
-                jobDescriptionLength > 4500 ? 
+                jobDescriptionLength > 7500 ? 
                 <>
                   {
-                    jobDescriptionLength >= 5000 ?
+                    jobDescriptionLength >= 10000 ?
                     <>
-                      (5000 / 5000 max.) 🛑
+                      (10000 / 10000 max.) 🛑
                     </>
                     :
                     <>
-                      ({jobDescriptionLength} / 5000 max.) ⚠
+                      ({jobDescriptionLength} / 10000 max.) ⚠
                     </>
                   }
                 </>
                 :
                 <>
-                  ({jobDescriptionLength} / 5000 max.)
+                  ({jobDescriptionLength} / 10000 max.)
                 </>
               }
               </div>
@@ -333,6 +329,12 @@ const Dashboard = () => {
                 required
               />
             </div>
+            { resumeText && <>
+            <br/>
+            <div role='resumeTextAlert'>
+              Resume Text Received
+            </div>
+            </>}
             <br/>
             <div>
               {
@@ -345,7 +347,7 @@ const Dashboard = () => {
           </form>
           <br/>
         </div>
-        {(submittedDescription && submittedResume && !feedbackVisible) &&
+        {(submittedDescription && submittedResume) &&
           <button 
             type='submit'
             role='feedbackButton'
@@ -425,10 +427,10 @@ const Dashboard = () => {
                 </li>
               </ul>
             }
-            <h5 role='suggestionsTitle'>Textual Resume With Matched {
-              <b style={{'background-color': '#cc990055'}}>Skills</b>
+            <h5 role='highlightedResumeTitle'>Textual Resume With Matched {
+              <b style={{backgroundColor: '#cc990055'}}>Skills</b>
               } and {
-              <b style={{'background-color': '#3333ff55'}}>Keywords</b>
+              <b style={{backgroundColor: '#3333ff55'}}>Keywords</b>
               }:
             </h5>
             <p id='displayResume'>

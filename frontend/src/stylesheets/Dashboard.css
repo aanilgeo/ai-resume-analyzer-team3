@@ -336,6 +336,11 @@ div.fade {
 	color: #999;
 }
 
+.feedbackButton {
+	width: 100%;
+	margin-bottom: 30px;
+}
+
 .downloadButton {
 	width: 100%;
 	margin-bottom: 30px;
