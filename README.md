@@ -17,13 +17,13 @@ The AI Resume Analyzer helps job seekers refine their resumes by analyzing conte
 
 ## Team-3 Assignments
 
-| Team Member                            | Assignment                                     |
-|----------------------------------------|------------------------------------------------|
-| Andrew Anil George (Project Manager)   | Project Base Setup + Final Review & Merge      |
-| Sebastian Alcock                       | Tasks 9, 13, 14, 15, 16 + Backend Unittesting  |
-| Jhaylor Cudia                          | Tasks 4, 5, 6, 7, 14, 16 + Backend Unittesting |
-| Harshit Bansal                         | Tasks 8, 10, 12 + Frontend Unittesting         |
-| Neel Patel                             | Task 11 + Frontend Unitesting                  |
+| Team Member         | Assignment      |
+|---------------------|-----------------|
+| Andrew Anil George  | Project Manager |
+| Sebastian Alcock    | Frontend        |
+| Jhaylor Cudia       | Frontend        |
+| Harshit Bansal      | Backend         |
+| Neel Patel          | Backend         |
 
 ---
 
