@@ -180,6 +180,7 @@ npm start
 - **End-to-End Testing**:
   Use Playwright for frontend e2e testing:
   ```bash
+  npx playwright install
   npx playwright test
   ```
 
