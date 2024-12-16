@@ -127,6 +127,11 @@ test('End-to-end workflow, positive responses', async ({ page }) => {
 });
 
 test('End-to-end workflow, negative or error responses', async ({ page }) => {
+  await page.route('*/**/api/verify-token', async route => {
+    const json = [{}];
+    await route.fulfill({ json });
+  });
+  
   await page.goto('http://127.0.0.1:3000');
 
   await expect(page.getByText('Home Page')).toBeVisible();
