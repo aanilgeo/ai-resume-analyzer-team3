@@ -60,8 +60,6 @@ def analyze_with_openai(resume_text: str, job_description: str) -> dict:
                         "experience": ["<feedback1>", "<feedback2>"],
                         "formatting": ["<feedback1>", "<feedback2>"]
                     }},
-                    "missing_keywords": {local_feedback["missing_keywords"]},
-                    "suggestions": {local_feedback["categorized_feedback"]}
                 }}
                 """
             }]
@@ -148,22 +146,49 @@ def get_fit_score(payload: AIRequestSchema):
             status_code=400, 
             detail=f"Each input field must not exceed {max_length} characters."
         )
-
+    
     try:
         result = analyze_with_openai(payload.resume_text, payload.job_description)
+        fit_score = calculate_fit_score(payload.resume_text, payload.job_description)
+        key = "missing_keywords"
+        feedback = generate_feedback(payload.resume_text,payload.job_description)
+        feedback.pop(key)
+        keywords = result.get("keywords", [])
+        skills = result.get("skills", [])
+        # Return final results
+
+        return {
+            "fit_score": fit_score,
+            "keywords": keywords, 
+            "skills": skills,
+            "feedback": feedback
+        }
+    except Exception as e:
+        keywords = []
+        skills = []
+        print(f"GPT-4 Error: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid input: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+    
+
+    # try:
+    #     result = analyze_with_openai(payload.resume_text, payload.job_description)
        
-        # Calculate fit score locally
-        fit_score_result = calculate_fit_score(payload.resume_text, payload.job_description)
-        print("Fit score result:", fit_score_result)
+    #     # Calculate fit score locally
+    #     fit_score_result = calculate_fit_score(payload.resume_text, payload.job_description)
+    #     print("Fit score result:", fit_score_result)
 
-        # Generate local feedback
-        feedback_result = generate_feedback(payload.resume_text, payload.job_description)
-        print("Feedback:", feedback_result)
+    #     # Generate local feedback
+    #     feedback_result = generate_feedback(payload.resume_text, payload.job_description)
+    #     print("Feedback:", feedback_result)
 
-        #result["fit_score"] = fit_score_result
-        result["missing_keywords"] = feedback_result.get("missing_keywords", [])
+    #     #result["fit_score"] = fit_score_result
+    #     result["missing_keywords"] = feedback_result.get("missing_keywords", [])
 
-        return result
+    #     return result
 
 
 
@@ -190,10 +215,3 @@ def get_fit_score(payload: AIRequestSchema):
         #     "skills": skills,
         #     "keywords": missing_keywords
         # }
-
-    
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid input: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

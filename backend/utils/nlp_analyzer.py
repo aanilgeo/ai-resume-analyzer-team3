@@ -285,4 +285,3 @@ def calculate_fit_score(resume_text, job_description):
 
     
     return (int(fit_score))
-        
