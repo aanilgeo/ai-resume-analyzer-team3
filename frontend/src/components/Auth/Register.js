@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Navbar';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -38,41 +39,47 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
+    <>
+    <Navbar activeTab='register'/>
+    <div id='hp'>
+      <h2>Register:</h2>
       <form onSubmit={handleRegister}>
-        <div>
-          <label htmlFor='email'>Email:</label>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='email'>Email:</label>
           <input 
+            placeholder='example@gmail.com'
             id='email'
-            type="email" 
+            type='email' 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label htmlFor='username'>Username:</label>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='username'>Username:</label>
           <input 
+            placeholder='example'
             id='username'
-            type="text" 
+            type='text' 
             value={username} onChange={(e) => setUsername(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label htmlFor='password'>Password:</label>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='password'>Password:</label>
           <input 
+            placeholder='password'
             id='password'
-            type="password" 
+            type='password' 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label htmlFor='confirmPassword'>Confirm Password:</label>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='confirmPassword'>Confirm Password:</label>
           <input
+            placeholder='password'
             id='confirmPassword'
             type='password'
             value={confirmPassword}
@@ -80,12 +87,13 @@ const Register = () => {
             required
           />
         </div>
-        <button type="submit">Register</button>
+        <button type='submit'>Register</button>
       </form>
       {success && <p style={{ color: 'green' }}>Registration successful!</p>} {/* Display success message */}
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-      {success && <button onClick={() => navigate('/')}>Go Home</button>} {/* Display 'Go Home' button */}
+      {success && <button data-testid='loginButton' onClick={() => navigate('/')}>Go Login</button>} {/* Display 'Go Home' button */}
     </div>
+    </>
   );
 };
 
