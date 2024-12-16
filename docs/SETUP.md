@@ -181,6 +181,7 @@ npm start
   Use Playwright for frontend e2e testing:
   ```bash
   npx playwright install
+  sudo npx playwright install-deps
   npx playwright test
   ```
 
