@@ -91,7 +91,7 @@ const Register = () => {
       </form>
       {success && <p style={{ color: 'green' }}>Registration successful!</p>} {/* Display success message */}
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-      {success && <button data-testid='loginButton' onClick={() => navigate('/')}>Go Login</button>} {/* Display 'Go Home' button */}
+      {success && <button data-testid='loginButton' onClick={() => navigate('/login')}>Go Login</button>} {/* Display 'Go Home' button */}
     </div>
     </>
   );

@@ -315,16 +315,13 @@ const Dashboard = () => {
 
   // Tippy for tooltips on suggestionlists
   new tippy('#skillSuggestionsListItem',{
-    animation:'scale',
-    arrow:'true'
+    animation:'scale'
   });
   new tippy('#experienceSuggestionListItem',{
-    animation:'scale',
-    arrow:'true'
+    animation:'scale'
   });
   new tippy('#formattingSuggestionListItem',{
-    animation:'scale',
-    arrow:'true'
+    animation:'scale'
   });
 
   return (

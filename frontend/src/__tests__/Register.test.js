@@ -158,7 +158,7 @@ test('redirects to homepage when "Go Login" button is clicked after successful r
     fireEvent.click(goLoginButton); // Click 'Go Login' button
 
     // Assert that navigation was triggered
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
 })
 
 test('displays specific error message when registering with duplicate email', async () => {

@@ -99,7 +99,7 @@ def analyze_text(payload: AIRequestSchema):
 
 
 # New endpoint to calculate the fit score and provide feedback
-@router.post("/fit-score", response_model=AIResponseSchema)
+@router.post("/fit-score")
 def get_fit_score(payload: AIRequestSchema):
     """
     Endpoint to calculate the fit score and provide feedback.
@@ -132,12 +132,12 @@ def get_fit_score(payload: AIRequestSchema):
         skills = result.get("skills", [])
         # Return final results
 
-        return {
+        return {"feedback": {
             "fit_score": fit_score,
             "keywords": keywords, 
             "skills": skills,
             "feedback": {"skills": feedback_missing_keywords, "experience": experience, "formatting": feedback.get("formatting", [])}
-        }
+        }}
     except Exception as e:
         keywords = []
         skills = []
