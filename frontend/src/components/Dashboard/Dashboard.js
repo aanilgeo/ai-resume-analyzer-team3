@@ -389,9 +389,9 @@ const Dashboard = () => {
             <div>
               {
                 submittedDescription ?
-                <button role='descriptionButton' type='submit'>Resubmit Description</button>
+                <button role='descriptionButton' id='descriptionButton' type='submit'>Resubmit Description</button>
                 :
-                <button role='descriptionButton' type='submit'>Submit Description</button>
+                <button role='descriptionButton' id='descriptionButton' type='submit'>Submit Description</button>
               }
             </div>
           </form>
@@ -410,7 +410,7 @@ const Dashboard = () => {
             </div>
             { resumeText && <>
             <br/>
-            <div role='resumeTextAlert'>
+            <div id='resumeTextAlert' role='resumeTextAlert'>
               Resume Text Received
             </div>
             </>}
@@ -418,9 +418,9 @@ const Dashboard = () => {
             <div>
               {
                 submittedResume ?
-                <button role='fileButton' type='submit'>Reupload Resume</button>
+                <button role='fileButton' id='fileButton' type='submit'>Reupload Resume</button>
                 :
-                <button role='fileButton' type='submit'>Upload Resume</button>
+                <button role='fileButton' id='fileButton' type='submit'>Upload Resume</button>
               }
             </div>
           </form>
@@ -431,6 +431,8 @@ const Dashboard = () => {
             type='submit'
             role='feedbackButton'
             className='feedbackButton'
+            id='feedbackButton'
+            data-testid='feedbackButton' 
             onClick={getFeedback}
             >
             Get Feedback
@@ -515,7 +517,7 @@ const Dashboard = () => {
             <p role='displayResume' id='displayResume'>
               {getHighlightedResume()}
             </p>
-            <button className='downloadButton' role='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
+            <button role='downloadButton' className='downloadButton' id='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
           </div>
         </div>
     </>

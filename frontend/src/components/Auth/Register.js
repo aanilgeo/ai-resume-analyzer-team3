@@ -58,7 +58,7 @@ const Register = () => {
         <div className='formRow'>
           <label className='formLabel' htmlFor='username'>Username:</label>
           <input 
-            placeholder='example@gmail.com'
+            placeholder='example'
             id='username'
             type='text' 
             value={username} onChange={(e) => setUsername(e.target.value)} 
@@ -91,7 +91,7 @@ const Register = () => {
       </form>
       {success && <p style={{ color: 'green' }}>Registration successful!</p>} {/* Display success message */}
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-      {success && <button onClick={() => navigate('/')}>Go Home</button>} {/* Display 'Go Home' button */}
+      {success && <button data-testid='loginButton' onClick={() => navigate('/')}>Go Login</button>} {/* Display 'Go Home' button */}
     </div>
     </>
   );
