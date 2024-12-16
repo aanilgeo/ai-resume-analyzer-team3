@@ -11,7 +11,10 @@ def extract_text_from_pdf(pdf_path: str, page_range: tuple = None) -> str:
             page_text = page.extract_text()  # Extract text from each page
             if page_text:
                 text += page_text
-        return text.strip().replace('\n', ' ') #Normalize line breaks
+                
+        # Normalize text: remove excessive whitespace and line breaks
+        return " ".join(text.strip().split())        
+        #return text.strip().replace('\n', ' ') #Normalize line breaks
     except Exception as e:
         raise ValueError(f"Error reading PDF file '{pdf_path}': {str(e)}")
 

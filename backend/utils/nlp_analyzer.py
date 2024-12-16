@@ -1,11 +1,20 @@
-import re
+# Updated `nlp_analyzer.py`
 import os
-import json
-import nltk
-from dotenv import load_dotenv
+import string
+from collections import defaultdict
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from dotenv import load_dotenv
+import nltk
+import re
+import json
 from openai import OpenAI, APIError, APITimeoutError
-# Setup
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+
+# Load environment variables
 load_dotenv()
 
 # OpenAI setup
@@ -14,9 +23,147 @@ if not api_key:
     raise RuntimeError("OPENAI_API_KEY not found in environment variables")
 
 client = OpenAI(api_key=api_key)
-nltk.download("stopwords")
-nltk.download('punkt')
 
+
+def preprocess_text(text):
+    """
+    Preprocess text by converting to lowercase, removing punctuation, and stopwords.
+    """
+    stop_words = set(stopwords.words('english'))
+
+    # Add custom domain-specific stopwords
+    custom_stopwords = {"looking", "must", "clear", "skills", "expertise","with"}
+    stop_words.update(custom_stopwords)
+
+    text = text.lower().translate(str.maketrans('', '', string.punctuation))
+    tokens = word_tokenize(text)
+    return [word for word in tokens if word not in stop_words]
+
+
+def extract_missing_keywords(job_description, resume_text, skill_categories):
+    """
+    Extract missing keywords and categorize feedback based on the comparison.
+
+
+    Parameters:
+        job_description (str): Text from the job description.
+        resume_text (str): Text from the parsed resume.
+        skill_categories (dict): Dictionary of categorized skills.
+
+
+    Returns:
+        dict: Missing keywords and categorized feedback.
+    """
+    job_tokens = set(preprocess_text(job_description))
+    resume_tokens = set(preprocess_text(resume_text))
+    missing_keywords = job_tokens - resume_tokens
+
+    print("Job Tokens: ", job_tokens)
+    print("Resume Tokens: ", resume_tokens)
+
+   
+    
+    categorized_feedback = defaultdict(list)
+
+
+    for keyword in missing_keywords:
+        found = False
+        for category, skills in skill_categories.items():
+            # Check for exact matches or partial matches in skills
+            if any(skill in keyword for skill in skills):
+                categorized_feedback[category].append(keyword)
+                found = True
+                break
+        if not found:
+            categorized_feedback["other_terms"].append(keyword)
+
+
+    return {
+        "missing_keywords": list(missing_keywords),
+        "categorized_feedback": dict(categorized_feedback),
+    }
+
+
+
+# Sample skill categories
+SKILL_CATEGORIES = {
+    "technical_skills": ["python", "aws", "rest", "api", "java", "sql", "docker"],
+    "soft_skills": ["leadership", "communication", "teamwork", "problem-solving"],
+    "experience_keywords": ["project management", "team collaboration", "cross-functional teams", "project"],
+}
+
+def generate_feedback(resume_text: str, job_description: str) -> dict:
+    """
+    Generate feedback based on missing keywords, categorized into specific areas like skills,
+    experience, and formatting.
+
+    Parameters:
+        resume_text (str): Text of the resume.
+        job_description (str): Text of the job description.
+
+    Returns:
+        dict: Feedback categorized into 'skills', 'experience', and 'formatting'.
+    """
+    # Extract missing keywords and categorized feedback
+    analysis_result = extract_missing_keywords(job_description, resume_text, SKILL_CATEGORIES)
+    missing_keywords = analysis_result["missing_keywords"]
+    categorized_feedback = analysis_result["categorized_feedback"]
+
+    feedback = {
+        "skills": [],
+        "experience": [],
+        "formatting": [],
+        "missing_keywords": missing_keywords
+    }
+
+    # # Include missing keywords feedback
+    # if missing_keywords:
+    #     feedback["missing_keywords"].append(
+    #         f"Consider adding these missing keywords to your resume: {', '.join(missing_keywords)}."
+    #     )
+
+    # Populate feedback for missing skills
+    if "technical_skills" in categorized_feedback:
+        feedback["skills"].append(
+            f"Consider adding the following technical skills to your resume: {', '.join(categorized_feedback['technical_skills'])}."
+        )
+    if "soft_skills" in categorized_feedback:
+        feedback["skills"].append(
+            f"Highlight these soft skills more prominently: {', '.join(categorized_feedback['soft_skills'])}."
+        )
+
+    # Populate feedback for missing experience keywords
+    if "experience_keywords" in categorized_feedback:
+        feedback["experience"].append(
+            f"Include examples demonstrating these experiences: {', '.join(categorized_feedback['experience_keywords'])}."
+        )
+
+    # General feedback for formatting or other terms
+    if "other_terms" in categorized_feedback:
+        feedback["formatting"].append(
+            f"Consider emphasizing these relevant terms: {', '.join(categorized_feedback['other_terms'])}."
+        )
+
+    # # Now check for missing keywords that aren't already categorized
+    # remaining_missing_keywords = [
+    #     keyword for keyword in missing_keywords
+    #     if not any(keyword in categorized_feedback[category] for category in categorized_feedback)
+    # ]
+
+    # # Include missing keywords feedback if necessary
+    # if remaining_missing_keywords:
+    #     feedback["missing_keywords"].append(
+    #         f"Consider adding these missing keywords to your resume: {', '.join(remaining_missing_keywords)}."
+    #     )
+
+    # Fallback feedback for resumes with significant gaps
+    if not missing_keywords:
+        feedback["formatting"].append("Your resume aligns well with the job description, but consider fine-tuning for more impact.")
+
+    return feedback
+
+
+#added for task 24
 # Calculate fit score function (Tasks 21,22)
 def calculate_fit_score(resume_text, job_description):
     # Tokenize and normalize text

@@ -55,8 +55,7 @@ async def upload_resume(resume_file: UploadFile = File(...)):
                 temp_file.write(content)
                 temp_file_path = temp_file.name
             # Extract text from PDF using the utility function
-            text_content = extract_text_from_pdf(temp_file_path)
-            print(text_content)
+            text_content = extract_text_from_pdf(temp_file_path)  
             os.remove(temp_file_path)  # Clean up the temporary file after extracting text
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
@@ -70,11 +69,11 @@ async def upload_resume(resume_file: UploadFile = File(...)):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error processing DOCX: {str(e)}")
 
-
+       
 
     # Store the extracted text content in temporary storage
     store_data("session_id_123", "resume_text", text_content)  # Replace "temp_user" with actual user identifier as needed
-
+    #print(text_content)
     return {"message": "Resume uploaded successfully.", "status": "success"}
 
 
