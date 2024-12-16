@@ -72,4 +72,3 @@ def test_invalid_field_data_type():
     response = client.post("/api/analyze", json=payload)
     assert response.status_code == 422
     assert response.json() == {"error": "Invalid input format or data."}
-

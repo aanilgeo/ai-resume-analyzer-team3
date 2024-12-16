@@ -1,5 +1,6 @@
-import secrets
 import os
+import secrets
+import sys
 from dotenv import load_dotenv
 
 # Path to the .env file where secret key will be stored
@@ -40,12 +41,9 @@ from backend.utils.storage import store_data, get_data, clear_data
 from backend.api.auth import get_router as auth_router_factory
 from backend.utils.pdf_parser import extract_text_from_pdf
 from backend.api.auth import get_router as auth_router_factory
-import sys
 
 # Add the backend directory (or project root) to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
-
-
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
