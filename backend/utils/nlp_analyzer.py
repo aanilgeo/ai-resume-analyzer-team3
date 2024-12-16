@@ -15,6 +15,7 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 nltk.download("stopwords")
+nltk.download('punkt')
 
 # Calculate fit score function (Tasks 21,22)
 def calculate_fit_score(resume_text, job_description):
@@ -67,7 +68,6 @@ def calculate_fit_score(resume_text, job_description):
         except Exception as error:
             raise RuntimeError(f"Unexpected error: {error}")
         
-
     # Return 0 given either is empty or non-string inputs 
     if not resume_text or not job_description:
         return 0

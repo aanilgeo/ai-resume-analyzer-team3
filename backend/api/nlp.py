@@ -15,6 +15,7 @@ if not api_key:
     raise RuntimeError("OPENAI_API_KEY not found in environment variables")
 
 client = OpenAI(api_key=api_key)
+
 # Helper function to get base formatted response from OpenAI
 def analyze_with_openai(resume_text: str, job_description: str) -> dict:
     if not resume_text or not job_description:
