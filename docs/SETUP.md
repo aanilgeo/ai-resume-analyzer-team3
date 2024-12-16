@@ -65,13 +65,6 @@
      sudo apt install git
      ```
 
-4. **Install nltk Dependencies**:
-   ```bash
-   python3
-   >>> import nltk
-   >>> nltk.download('punkt_tab')
-   ```
-
 ---
 
 ## Project Setup
@@ -106,12 +99,23 @@ source venv/Scripts/activate
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 3. Install nltk Dependencies:
+ ```bash
+ # Unix/MacOS/WSL
+ pip3 install nltk
+ python3 -c "import nltk; nltk.download('punkt_tab')"
+
+ # Git Bash/Windows Command Prompt
+ pip install nltk
+ python -c "import nltk; nltk.download('punkt_tab')"
+ ```
+
+### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Start the Backend Server
+### 5. Start the Backend Server
 ```bash
 uvicorn backend.main:app --reload
 ```
