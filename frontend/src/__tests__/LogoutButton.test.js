@@ -11,6 +11,12 @@ jest.mock('react-router-dom', () => ({
 }));
 
 test('logs user out and redirects to homepage', async () => {
+
+    localStorage.setItem('token', 'mockToken'); // Simulate addition of token
+
+    // Check for the token in localStorage
+    expect(localStorage.getItem('token')).toBe('mockToken');
+
     render(
         <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Dashboard />

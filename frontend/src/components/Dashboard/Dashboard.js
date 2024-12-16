@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import './Dashboard.css'
-import LogoutButton from '../Auth/LogoutButton';
+import '../../stylesheets/Navbar.css'
+import '../../stylesheets/Dashboard.css'
+import Navbar from '../Navbar';
+
+// For advanced user interface enhancements
+import { Markup } from 'interweave';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
+
+import jsPDF from 'jspdf';
 
 const Dashboard = () => {
   const [jobDescription, setDescription] = useState('');
   const [resumeFile, setFile] = useState(null);
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submittedDescription, setSubmittedDescription] = useState(false);
   const [submittedResume, setSubmittedResume] = useState(false);
-  const [fitScore, setFitScore] = useState(0);
-  const [skillsList, setSkillsList] = useState([]);
-  const [keywordsList, setKeywordsList] = useState([]);
-  const [improvementSuggestions, setImprovementSuggestions] = useState([]);
 
-  var jobDescriptionLength = jobDescription.length
+  // Feedback state variables
+  const [fitScore, setFitScore] = useState(0);
+  const [skills, setSkills] = useState([]);
+  const [keywords, setKeywords] = useState([]);
+  const [skillsFeedback, setSkillsFeedback] = useState([]);
+  const [experienceFeedback, setExperienceFeedback] = useState([]);
+  const [formattingFeedback, setFormattingFeedback] = useState([]);
+  const [resumeText, setResumeText] = useState('');
+
+  // Feedback display variables
+  const [displaySkills, setDisplaySkills] = useState(true);
+  const [displayExperience, setDisplayExperience] = useState(true);
+  const [displayFormatting, setDisplayFormatting] = useState(true);
+
+  var jobDescriptionLength = jobDescription.length;
 
   // Handle job description uploads
   const handleSubmit = async (e) => {
@@ -23,24 +40,23 @@ const Dashboard = () => {
     if (jobDescription === '') {
       alert('Please fill out the job description, job description cannot be empty');
     }
-    else if (jobDescription.length > 5000) {
-      alert('Job description cannot exceed 5000 characters');
+    else if (jobDescription.length > 10000) {
+      alert('Job description cannot exceed 10000 characters');
     }
     else {
-      setLoading(true)
+      setLoading(true);
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/job-description', {
+        await axios.post('http://127.0.0.1:8000/api/job-description', {
           'job_description': jobDescription
         }, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
+        }).then( () => {
+          setSubmittedDescription(true);
         });
-        setSubmittedDescription(true);
-        setMessage(response.data.message); // Display success message
       } catch (error) {
-        setMessage(error.response?.data?.detail || 'An error occurred'); // Display error message
-        window.alert('There was a problem reaching the server, please try again later');
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Unknown'}`);
       }
     }
     setLoading(false);
@@ -64,20 +80,20 @@ const Dashboard = () => {
       alert('File size must be smaller than 2MB');
     }
     else {
-      setLoading(true)
+      setLoading(true);
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/resume-upload', {
+        await axios.post('http://127.0.0.1:8000/api/resume-upload', {
           'resume_file': resumeFile
         }, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
+        }).then( response => {
+          setSubmittedResume(true);
+          setResumeText(response.data.resume_text);
         });
-        setSubmittedResume(true);
-        setMessage(await response.data.message); // Display success message
       } catch (error) {
-        setMessage(await error.response?.data?.detail || 'An error occurred'); // Display error message
-        window.alert('There was a problem reaching the server, please try again later');
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Unknown'}`);
       }
     }
     setLoading(false);
@@ -85,8 +101,10 @@ const Dashboard = () => {
 
   // For double-checking logic on description entry
   function changeDescription(e) {
-    if (jobDescription.length > 5000) {
-      alert('Job description cannot exceed 5000 characters');
+    setSubmittedDescription(false)
+    document.getElementById('feedback').classList.add('hidden');
+    if (jobDescription.length > 10000) {
+      alert('Job description cannot exceed 10000 characters');
     }
     else {
       setDescription(e)
@@ -95,6 +113,8 @@ const Dashboard = () => {
 
   // For double-checking logic on file upload
   function changeFile(e) {
+    setSubmittedResume(false)
+    document.getElementById('feedback').classList.add('hidden');
     if (e.target.files[0] === null) {
       alert('File is null');
     }
@@ -117,7 +137,8 @@ const Dashboard = () => {
   };
 
   // Animation for fit score percentage bar
-  function checkProgress(progress) {
+  function setProgress(progress) {
+    setFitScore(progress)
     var i = 0;
     if (i === 0) {
       i = 1;
@@ -147,53 +168,165 @@ const Dashboard = () => {
     }
   }
 
-  // Placeholder function to get feedback
-  function getFeedback() {
-    if (submittedDescription && submittedResume) {
-      const mockdata = [
-        {
-          'fitScore': 15,
-          'skillsList': ['Skill0'],
-          'keywordsList': ['Keyword0'],
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.']
-        },
-        {
-          'fitScore': 65,
-          'skillsList': ['Skill0', 'Skill1', 'Skill5'],
-          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6'],
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.']
-        },
-        {
-          'fitScore': 85,
-          'skillsList': ['Skill0', 'Skill1', 'Skill5', 'Skill6'],
-          'keywordsList': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6', 'Keyword9'],
-          'improvementSuggestions': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.']
-        }
-      ]
+  function getHighlightedResume() {
+    if (resumeText) {
+      var highlightedResume = resumeText;
+      skills.forEach( skill => {
+        const pattern = skill;
+        const re = new RegExp(pattern, 'gi');
+        highlightedResume = highlightedResume.replace(re, (x) => `<b role='highlightedSkill' style='background-color:rgba(204, 153, 0, 0.33);'>${x}</b>`);
+      })
+      keywords.forEach( keyword => {
+        const pattern = keyword;
+        const re = new RegExp(pattern, 'gi');
+        highlightedResume = highlightedResume.replace(re, (x) => `<b role='highlightedKeyword' style='background-color:rgba(51, 51, 255, 0.33);'>${x}</b>`);
+      })
+      highlightedResume.replace('\n', '<br/>')
+      return <Markup role='highlightedResume' content={highlightedResume} allowAttributes='true'/>;
+    }
+  }
 
-      // Currently looks at the job description to determine what mock data to use
-      var feedback = mockdata[2];
-      if (jobDescription.includes("poor")) {
-        feedback = mockdata[0];
-      } else if (jobDescription.includes("average")) {
-        feedback = mockdata[1];
+  // Gets feedback from backend analyzer
+  async function getFeedback()  {
+    if (submittedDescription && submittedResume && resumeText && jobDescription) {
+      setLoading(true)
+      var d = {
+        'resume_text': resumeText,
+        'job_description': jobDescription
       }
+      try {
+        await axios.post('http://127.0.0.1:8000/api/fit-score', d, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then( response => {
+          // Set state variables assuming properly formed json response where possible
 
-      setFitScore(feedback.fitScore);
-      checkProgress(feedback.fitScore);
-      setSkillsList(feedback.skillsList);
-      setKeywordsList(feedback.keywordsList);
-      setImprovementSuggestions(feedback.improvementSuggestions);
+          if (response.data.feedback.fit_score) {
+            setProgress(response.data.feedback.fit_score);
+          } else {
+            setProgress(0);
+          }
 
-      // Unhide results area
-      document.getElementById('feedback').classList.remove('hidden')
+          if (response.data.feedback.skills?.filter(Boolean).length) {
+            setSkills(response.data.feedback.skills.filter(Boolean));
+          } else {
+            setSkills(['No matched skills']);
+          }
+          if (response.data.feedback.keywords?.filter(Boolean).length) {
+            setKeywords(response.data.feedback.keywords.filter(Boolean));
+          } else {
+            setKeywords(['No matched keywords']);
+          }
+
+          if (response.data.feedback.feedback) {
+            setSkillsFeedback(response.data.feedback.feedback.skills?.filter(Boolean) || []);
+            setExperienceFeedback(response.data.feedback.feedback.experience?.filter(Boolean) || []);
+            setFormattingFeedback(response.data.feedback.feedback.formatting?.filter(Boolean) || []);
+          }
+        });
+
+        // Unhide results area
+        document.getElementById('feedback').classList.remove('hidden');
+      } catch (error) {
+        alert(`There was a problem reaching the server, please try again later\nError Response: ${error?.response?.data?.detail || 'Uknown'}`);
+      }
+      setLoading(false)
     } else {
-      alert('Please submit job description and resume to get feedback')
+      alert('Please ensure job description and resume are submitted, otherwise, your job description or resume might be empty. Please try again.')
     }
   };
 
+  // Helper function for downloadReport()
+  const addTextWithOverflow = (doc, text, x, y, maxWidth, lineHeight, margin) => {
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const lines = doc.splitTextToSize(text, maxWidth);
+
+    lines.forEach((line) => {
+      if (y + lineHeight > pageHeight - margin) {
+        doc.addPage();
+        y = margin; // Reset y to margin on new page
+      }
+      doc.text(line, x, y);
+      y += lineHeight;
+    });
+
+    return y; // Return the updated y position
+  };
+
+  const downloadReport = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      const lineHeight = 10;
+      const maxWidth = pageWidth - 2 * margin; // Maximum text width
+      let y = margin;
+
+      // Title
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(24);
+      y = addTextWithOverflow(doc, 'Resume Analysis Report', margin, y, maxWidth, lineHeight, margin);
+
+      // Fit Score
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(16);
+      y = addTextWithOverflow(doc, `Fit Score: ${fitScore}`, margin, y, maxWidth, lineHeight, margin);
+
+      // Keywords Section
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Matched Keywords:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      keywords.forEach((keyword) => {
+        y = addTextWithOverflow(doc, `- ${keyword}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Skills Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Skills:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      skillsFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Experience Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Experience:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      experienceFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Formatting Feedback
+      doc.setFont('Helvetica', 'bold');
+      y = addTextWithOverflow(doc, 'Formatting:', margin, y, maxWidth, lineHeight, margin);
+      doc.setFont('Helvetica', 'normal');
+      formattingFeedback.forEach((item) => {
+        y = addTextWithOverflow(doc, `- ${item}`, margin + 10, y, maxWidth - 10, lineHeight, margin);
+      });
+
+      // Save PDF
+      doc.save('Resume_Analysis_Report.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error.message);
+      alert('Failed to generate PDF. Please try again.');
+    }
+  };
+
+  // Tippy for tooltips on suggestionlists
+  new tippy('#skillSuggestionsListItem',{
+    animation:'scale'
+  });
+  new tippy('#experienceSuggestionListItem',{
+    animation:'scale'
+  });
+  new tippy('#formattingSuggestionListItem',{
+    animation:'scale'
+  });
+
   return (
     <>
+      <Navbar activeTab='dashboard'/>
       {
         loading &&
           <>
@@ -210,122 +343,179 @@ const Dashboard = () => {
             </div>
           </>
       }
-      <div>
-        <h2 role='title'>Dashboard</h2>
-        <LogoutButton className="logout-button" />
-        <p role='titleMessage'>Welcome to the user dashboard.</p>
-      </div>
-      <div>
-        <form role='descriptionForm' onSubmit={handleSubmit}>
-          <h5 role='descriptionLabel'>Job Description: {submittedDescription && '✅'}</h5>
-          <div>
-            <textarea
-              title='Job Description Submission'
-              id='descriptionUpload'
-              role='descriptionInput'
-              placeholder='Input the details of the job here...'
-              value={jobDescription}
-              onClick={() => setSubmittedDescription(false)}
-              onChange={(e) => changeDescription(e.target.value)}
-              rows='6'
-              maxLength={5000}
-              required
-            />
-            <div role='descriptionCharacterLength'>
-            {
-              jobDescriptionLength > 4500 ? 
-              <>
-                {
-                  jobDescriptionLength >= 5000 ?
-                  <>
-                    (5000 / 5000 max.) 🛑
-                  </>
-                  :
-                  <>
-                    ({jobDescriptionLength} / 5000 max.) ⚠
-                  </>
-                }
-              </>
-              :
-              <>
-                ({jobDescriptionLength} / 5000 max.)
-              </>
-            }
+      <div id='hp'>
+        <h2 role='title'>Dashboard:</h2>
+        <div className='dashboardForm'>
+          <form role='descriptionForm' onSubmit={handleSubmit}>
+            <h5 role='descriptionLabel'>Job Description: {submittedDescription && '✅'}</h5>
+            <div>
+              <textarea
+                title='Job Description Submission'
+                id='descriptionUpload'
+                role='descriptionInput'
+                placeholder='Input the details of the job here...'
+                value={jobDescription}
+                onChange={(e) => changeDescription(e.target.value)}
+                rows='6'
+                maxLength={10000}
+                required
+              />
+              <div id='descriptionCharacterLength' role='descriptionCharacterLength'>
+              {
+                jobDescriptionLength > 7500 ? 
+                <>
+                  {
+                    jobDescriptionLength >= 10000 ?
+                    <>
+                      (10000 / 10000 max.) 🛑
+                    </>
+                    :
+                    <>
+                      ({jobDescriptionLength} / 10000 max.) ⚠
+                    </>
+                  }
+                </>
+                :
+                <>
+                  ({jobDescriptionLength} / 10000 max.)
+                </>
+              }
+              </div>
             </div>
-          </div>
+            <br/>
+            <div>
+              {
+                submittedDescription ?
+                <button role='descriptionButton' id='descriptionButton' type='submit'>Resubmit Description</button>
+                :
+                <button role='descriptionButton' id='descriptionButton' type='submit'>Submit Description</button>
+              }
+            </div>
+          </form>
+          <form role='fileForm' onSubmit={handleUpload}>
+            <h5 role='fileLabel'>Resume Upload: {submittedResume && '✅'}</h5>
+            <div>
+              <input
+                title='Resume File Upload'
+                id='fileUpload'
+                role='fileInput'
+                type='file'
+                placeholder='N/A'
+                onChange={(e) => changeFile(e)}
+                required
+              />
+            </div>
+            { resumeText && <>
+            <br/>
+            <div id='resumeTextAlert' role='resumeTextAlert'>
+              Resume Text Received
+            </div>
+            </>}
+            <br/>
+            <div>
+              {
+                submittedResume ?
+                <button role='fileButton' id='fileButton' type='submit'>Reupload Resume</button>
+                :
+                <button role='fileButton' id='fileButton' type='submit'>Upload Resume</button>
+              }
+            </div>
+          </form>
           <br/>
-          <div>
-            {
-              submittedDescription ?
-              <button role='descriptionButton' type='submit'>Resubmit Description</button>
-              :
-              <button role='descriptionButton' type='submit'>Submit Description</button>
-            }
-          </div>
-        </form>
-        <form role='fileForm' onSubmit={handleUpload}>
-          <h5 role='fileLabel'>Resume Upload: {submittedResume && '✅'}</h5>
-          <div>
-            <input
-              title='Resume File Upload'
-              id='fileUpload'
-              role='fileInput'
-              type='file'
-              placeholder='N/A'
-              onClick={() => setSubmittedResume(false)}
-              onChange={(e) => changeFile(e)}
-              required
-            />
-          </div>
-          <br/>
-          <div>
-            {
-              submittedResume ?
-              <button role='fileButton' type='submit'>Reupload Resume</button>
-              :
-              <button role='fileButton' type='submit'>Upload Resume</button>
-            }
-          </div>
-        </form>
-        <br/>
+        </div>
         {(submittedDescription && submittedResume) &&
-        <button 
-          type='submit'
-          role='feedbackButton'
-          onClick={getFeedback}
-          >
+          <button 
+            type='submit'
+            role='feedbackButton'
+            className='feedbackButton'
+            id='feedbackButton'
+            data-testid='feedbackButton' 
+            onClick={getFeedback}
+            >
             Get Feedback
-        </button>
+          </button>
         }
-      </div>
-      <br/>
-        <div role='results' id='feedback' className='hidden'>
-          <h4 role='resultsTitle'>Results:</h4>
-          <h5 role='fitScoreLabel'>Resume Fit Score:</h5>
-          <div role='progressBar' id='progressBar'>
-            <div role='progressLabel' id='progressLabel'>0%</div>
+        <br/>
+          <div role='results' id='feedback' className='hidden'>
+            <h4 role='resultsTitle'>Results:</h4>
+            <h5 role='fitScoreLabel'>Fit Score:</h5>
+            <div id='progressBackground'>
+              <div role='progressBar' id='progressBar'>
+                <div role='progressLabel' id='progressLabel'>0%</div>
+              </div>
+            </div>
+            <div id='cols'>
+              <div className='col'>
+              <h5 role='skillsTitle'>Matched Skills:</h5>
+              <ul role='skills'>
+                {skills.map((item, index) => {
+                  return <li role='skillsItem' key={index}>{item}</li>
+                  }
+                )}
+              </ul>
+              </div>
+              <div className='col'>
+              <h5 role='keywordsTitle'>Matched Keywords:</h5>
+              <ul role='keywords'>
+                {keywords.map((item, index) => {
+                  return <li role='keywordsItem' key={index}>{item}</li>
+                  }
+                )}
+              </ul>
+              </div>
+            </div>
+            <h5 role='suggestionsTitle'>Improvement Suggestions:</h5>
+            <form className='checkboxes'>
+              <input role='skillsBox' id='skillsBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplaySkills(!displaySkills)}></input>
+              <label role='skillsBoxLabel'>Skills</label>
+              <input role='experienceBox' id='experienceBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayExperience(!displayExperience)}></input>
+              <label role='experienceBoxLabel'>Experience</label>
+              <input role='formattingBox' id='formattingBox' type='checkBox' defaultChecked='true' onClick={_ => setDisplayFormatting(!displayFormatting)}></input>
+              <label role='formattingBoxLabel'>Formatting</label>
+            </form>
+            {((displaySkills && skillsFeedback.length)
+              || 
+              (displayExperience && experienceFeedback.length)
+              || 
+              (displayFormatting && formattingFeedback.length)) ?
+              <ul role='suggestionsList' className='suggestionsList tooltip'>
+              { displaySkills && <>
+                {skillsFeedback.map((item, index) => {
+                  return <li role='skillSuggestionsListItem' id='skillSuggestionsListItem' title='This is a skill suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              { displayExperience && <>
+                {experienceFeedback.map((item, index) => {
+                  return <li role='experienceSuggestionsListItem' id='experienceSuggestionsListItem' title='This is an experience suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              { displayFormatting && <>
+                {formattingFeedback.map((item, index) => {
+                  return <li role='formattingSuggestionsListItem' id='formattingSuggestionsListItem' title='This is a formatting suggestion' key={index}>{item}</li>
+                  }
+                )}
+              </> }
+              </ul>
+              :
+              <ul role='suggestionsList' className='suggestionsList'>
+                <li role='suggestionListEmpty'>
+                  No suggestion items found
+                </li>
+              </ul>
+            }
+            <h5 role='highlightedResumeTitle'>Textual Resume With Matched {
+              <b style={{backgroundColor: '#cc990055', role: 'skillMatch'}}>Skills</b>
+              } and {
+              <b style={{backgroundColor: '#3333ff55', role: 'keywordMatch'}}>Keywords</b>
+              }:
+            </h5>
+            <p role='displayResume' id='displayResume'>
+              {getHighlightedResume()}
+            </p>
+            <button role='downloadButton' className='downloadButton' id='downloadButton' onClick={() => downloadReport()}> Download Results as PDF </button>
           </div>
-          <h5 role='skillsTitle'>Matched Skills:</h5>
-          <ul role='skillsList'>
-            {skillsList.map((skill, index) => {
-              return <li role='skillsListItem' key={index}>{skill}</li>
-              }
-            )}
-          </ul>
-          <h5 role='keywordsTitle'>Matched Keywords:</h5>
-          <ul role='keywordsList'>
-            {keywordsList.map((keyword, index) => {
-              return <li role='keywordsListItem' key={index}>{keyword}</li>
-              }
-            )}
-          </ul>
-          <h5 role='suggestionsTitle'>Improvement Suggestions:</h5>
-          <ul role='suggestionsList'>
-            {improvementSuggestions.map((feedbackItem, index) => {
-              return <li role='suggestionsListItem' key={index}>{feedbackItem}</li>
-              }
-            )}
-          </ul>
         </div>
     </>
   );

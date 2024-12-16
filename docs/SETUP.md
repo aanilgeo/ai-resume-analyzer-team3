@@ -91,4 +91,10 @@
     ```
     - `Note`: During test coverage, there might be some red lines shown which are uncovered. Uncovered lines are double-checking on submit after it has been already checked once in on upload, and additional unrequired quality of life features.
 
+  - `E2E Testing`: Playwright has been used for frontend e2e testing. To run, follow as below:-
+    ``` bash
+    cd frontend
+    npx playwright test
+    ```
+    
 Thank you for setting up the project! For any questions, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) for guidance on collaborating.

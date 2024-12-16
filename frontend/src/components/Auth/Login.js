@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Navbar from '../Navbar';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,29 +31,38 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <>
+      <Navbar activeTab='login'/>
+      <div id='hp'>
+      <h2>Login:</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */} 
       <form onSubmit={handleLogin}>
-        <label htmlFor='email'>Email:</label>
-        <input 
-          id='email' 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          required 
-        />
-        <label htmlFor='password'>Password:</label>
-        <input 
-          id='password' 
-          type="password" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-          required 
-        />
-        <button type="submit">Login</button>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='email'>Email:</label>
+          <input 
+            placeholder='example@gmail.com'
+            id='email' 
+            type='email' 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            required 
+          />
+        </div>
+        <div className='formRow'>
+          <label className='formLabel' htmlFor='password'>Password:</label>
+          <input 
+            placeholder='password'
+            id='password' 
+            type='password' 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+        </div>
+        <button type='submit'>Login</button>
       </form>
     </div>
+    </>
   );
 };
 

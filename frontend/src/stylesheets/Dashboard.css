@@ -30,9 +30,16 @@ div.fade {
 	}
 }
 
+#progressBackground {
+    width: 100%;
+    background-color: #333;
+	border-radius: 15px;
+}
+
 #progressBar {
     width: 100%;
-    background-color: grey;
+    background-color: #333;
+	border-radius: 15px;
 }
   
 #progressLabel {
@@ -42,7 +49,7 @@ div.fade {
     text-align: center; /* To center it horizontally (if you want) */
     line-height: 30px; /* To center it vertically */
     color: white;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 #floatingCirclesG {
@@ -175,8 +182,6 @@ div.fade {
 		-moz-animation-delay:1.5s;
 }
 
-
-
 @keyframes f_fadeG {
 	0%{
 		background-color:rgb(255,255,255);
@@ -234,9 +239,113 @@ div.fade {
 	gap: 20px;
 }
 
-.logout-button {
-    background-color: lightgray;
-    border: 1px solid gray;
-    padding: 5px 10px;
-    cursor: pointer;
+.dashboardForm {
+	display: flex;
+	height: 75%;
+}
+
+.dashboardForm form {
+	width: 50%;
+}
+
+.dashboardForm input {
+	position: relative;
+	padding: 12px;
+	border-radius: 5px;
+	border-color: transparent;
+	border-width: 0px;
+	font-weight: bold;
+	background-color: #EEE;
+	color: #333;
+    float: unset;
+    width: unset;
+    left: unset;
+}
+
+.dashboardForm input {
+	margin-right: 25px;
+    width: -webkit-fill-available;
+    background-color: #333;
+    color: #FFF;
+}
+
+.dashboardForm textarea {
+	max-width: 100%;
+	margin-right: 25px;
+	resize: none;
+    width: -webkit-fill-available;
+    background-color: #333;
+    color: #FFF;
+}
+
+.dashboardForm h5 {
+	margin-top: 0px;
+}
+
+.dashboardForm button {
+	margin-top: 0px;
+}
+
+.feedbackButton {
+    margin-top: 20px;
+}
+
+#feedback h4 {
+	margin-top: 0px;
+}
+
+#cols {
+	display: flex;
+}
+
+.col {
+	display: unset;
+	width: 50%;
+}
+
+#feedback input {
+    position: unset;
+    padding: unset;
+    border-radius: unset;
+    border-color: unset;
+    border-width: unset;
+    font-weight: unset;
+    background-color: unset;
+    color: unset;
+    float: unset;
+    width: unset;
+    left: unset;
+}
+
+.checkboxes {
+	padding-left: 10px;
+	display: flex;
+	background-color: #333;
+	height: 40px;
+	border-radius: 15px;
+}
+
+.checkboxes label {
+	margin-right: 25px;
+	margin-left: 15px;
+	margin-top: 8px;
+    vertical-align: -webkit-baseline-middle;
+}
+
+#descriptionCharacterLength {
+	color: #999;
+}
+
+.feedbackButton {
+	width: 100%;
+	margin-bottom: 30px;
+}
+
+.downloadButton {
+	width: 100%;
+	margin-bottom: 30px;
+}
+
+.suggestionsList {
+	margin-bottom: 35px;
 }

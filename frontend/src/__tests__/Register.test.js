@@ -10,7 +10,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockNavigate, // Replace useNavigate with the mock function
 }));
 
-test('displays a success message and a "Go Home" button when a user registers successfully', async () => {
+test('displays a success message and a "Go Login" button when a user registers successfully', async () => {
     render(
         <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Register />
@@ -38,9 +38,9 @@ test('displays a success message and a "Go Home" button when a user registers su
     const successMessage = await screen.findByText(/Registration successful!/i);
     expect(successMessage).toBeInTheDocument();
 
-    // Assert display of 'Go Home' button
-    const goHomeButton = await screen.findByRole('button', { name: /Go Home/i });
-    expect(goHomeButton).toBeInTheDocument();
+    // Assert display of 'Go Login' button
+    const goLoginButton = await screen.findByRole('button', { name: /Go Login/i });
+    expect(goLoginButton).toBeInTheDocument();
 });
 
 
@@ -118,7 +118,7 @@ test('displays error message on failed registration', async () => {
     expect(errorMessage).toBeInTheDocument();
 })
 
-test('redirects to homepage when "Go Home" button is clicked after successful registration', async () => {
+test('redirects to homepage when "Go Login" button is clicked after successful registration', async () => {
     render(
         <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Register />
@@ -154,11 +154,11 @@ test('redirects to homepage when "Go Home" button is clicked after successful re
     const successMessage = await screen.findByText(/Registration successful!/i);
     expect(successMessage).toBeInTheDocument();
 
-    const goHomeButton = await screen.findByRole('button', { name: 'Go Home' });
-    fireEvent.click(goHomeButton); // Click 'Go Home' button
+    const goLoginButton = await screen.findByRole('button', { name: 'Go Login' });
+    fireEvent.click(goLoginButton); // Click 'Go Login' button
 
     // Assert that navigation was triggered
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
 })
 
 test('displays specific error message when registering with duplicate email', async () => {
