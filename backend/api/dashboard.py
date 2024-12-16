@@ -70,7 +70,7 @@ async def upload_resume(resume_file: UploadFile = File(...)):
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error processing DOCX: {str(e)}")
-
+            
     # Store the extracted text content in temporary storage
     store_data("session_id_123", "resume_text", text_content)  # Replace "temp_user" with actual user identifier as needed
 
@@ -82,8 +82,8 @@ async def handle_job_description(job_description: str = Form(...)):
     """
     Allows successful job description submission along with validation
     """
-    #Description should not exceed 5000 characters
-    if len(job_description) > 5000:
+    #Description should not exceed 10000 characters
+    if len(job_description) > 10000:
         raise HTTPException(status_code=400, detail={
             "error": "Job description exceeds character limit.", 
             "status": "error"
@@ -96,63 +96,3 @@ async def handle_job_description(job_description: str = Form(...)):
     store_data("session_id_123", "job_description", clean_description)  # Placeholder user ID for demo
 
     return {"message": "Job description submitted successfully.", "status": "success"}
-
-@router.post("/fit-score")
-async def fit_score(fitScoreRequest: FitScoreRequest):
-    """
-    Example for score function to get the stuff needed to display on the dashboard
-    Should require other stuff to be called this is just for testing
-    """
-
-    print(fitScoreRequest.job_description)
-
-    mockdata = [
-        {
-            'fit_score': 15,
-            'skills': ['Skill0'],
-            'keywords': ['Keyword0'],
-            'feedback': {
-                'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-                'experience': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'],
-                'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'] 
-            }
-        },
-        {
-            'fit_score': 65,
-            'skills': ['Skill0', 'Skill1', 'Skill5'],
-            'keywords': ['Keyword0', 'Keyword1', 'Keyword5', 'Keyword6'],
-            'feedback': {
-                'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'],
-                'experience': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'],
-                'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'] 
-            }
-        },
-        {
-            'fit_score': 85,
-            'skills': ['bachelor', 'school', 'skills', 'coordinator'],
-            'keywords': ['committee', 'university', 'GPA', 'strategies', 'development'],
-            'feedback': {
-                'skills': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'],
-                'experience': [],
-                'formatting': ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'] 
-            }
-        }
-    ]
-
-    feedback = random.choice(mockdata)
-
-    jobDescription = get_data("session_id_123", "job_description")
-
-    print(jobDescription)
-
-    if ("poor" in jobDescription.lower()):
-        feedback = mockdata[0]
-    elif ("average" in jobDescription.lower()):
-        feedback = mockdata[1]
-    elif ("good" in jobDescription.lower()):
-        feedback = mockdata[2]
-
-    return {
-        "feedback": feedback, 
-        "status": "success"
-    }
