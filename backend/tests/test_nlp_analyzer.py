@@ -1,3 +1,4 @@
+'''Tasks 21, 22 unit tests (fit-score)'''
 import pytest
 from backend.utils.nlp_analyzer import calculate_fit_score
 

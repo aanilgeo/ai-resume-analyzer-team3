@@ -56,12 +56,7 @@ def extract_missing_keywords(job_description, resume_text, skill_categories):
     """
     job_tokens = set(preprocess_text(job_description))
     resume_tokens = set(preprocess_text(resume_text))
-    missing_keywords = job_tokens - resume_tokens
-
-    print("Job Tokens: ", job_tokens)
-    print("Resume Tokens: ", resume_tokens)
-
-   
+    missing_keywords = job_tokens - resume_tokens   
     
     categorized_feedback = defaultdict(list)
 

@@ -1,3 +1,4 @@
+'''Tasks 23 (Generating missing keywords and feedback)'''
 import pytest
 from backend.utils.nlp_analyzer import extract_missing_keywords, SKILL_CATEGORIES
 from fastapi.testclient import TestClient

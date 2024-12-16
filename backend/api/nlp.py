@@ -90,6 +90,7 @@ def analyze_with_openai(resume_text: str, job_description: str) -> dict:
 def analyze_text(payload: AIRequestSchema):
     try:
         result = analyze_with_openai(payload.resume_text, payload.job_description)
+        print(result)
         return result
     except ValueError as error:
         raise HTTPException(status_code=422, detail="Invalid input format or data.")
@@ -124,8 +125,10 @@ def get_fit_score(payload: AIRequestSchema):
         fit_score = calculate_fit_score(payload.resume_text, payload.job_description)
         key = "missing_keywords"
         feedback = generate_feedback(payload.resume_text,payload.job_description)
+        feedback_missing_keywords = feedback.get(key, [])
         feedback.pop(key)
         keywords = result.get("keywords", [])
+        experience = result.get("feedback", {}).get("experience", [])
         skills = result.get("skills", [])
         # Return final results
 
@@ -133,7 +136,7 @@ def get_fit_score(payload: AIRequestSchema):
             "fit_score": fit_score,
             "keywords": keywords, 
             "skills": skills,
-            "feedback": feedback
+            "feedback": {"skills": feedback_missing_keywords, "experience": experience, "formatting": feedback.get("formatting", [])}
         }
     except Exception as e:
         keywords = []
