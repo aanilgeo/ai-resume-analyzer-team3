@@ -197,29 +197,82 @@ You should have:
 ---
 
 ## Common Issues
-
-1. **Module Not Found Errors**:
-   Ensure the virtual environment is activated.
-
-2. **Port Conflicts**:
-   Check that no other processes are using ports `8000` or `3000`.
-
-3. **Dependency Issues**:
-   - Backend:
+- If module not found errors in backend: Make sure virtual environment is activated
+- If activation command not found in Git Bash: Make sure to use `source venv/Scripts/activate`
+- If backend server does not start: Make sure you are in the root directory
+- If frontend server does not start: Make sure you are in the frontend directory
+- If dependency issues in backend:
+  1. Verify virtual environment is activated (look for `(venv)` prefix in terminal)
+  2. Delete and recreate virtual environment:
      ```bash
-     pip install -r requirements.txt
+     # First deactivate if active
+     deactivate
+     
+     # Delete old environment
+     # Windows Command Prompt
+     rmdir /s venv
+     # Git Bash on Windows OR Unix/MacOS/WSL
+     rm -rf venv
+     
+     # Recreate environment (use appropriate command for your system)
+     # Windows
+     python -m venv venv
+     # Unix/MacOS/WSL
+     python3 -m venv venv
      ```
-   - Frontend:
+  3. Activate new environment and reinstall requirements:
      ```bash
-     npm install
+     # Windows Command Prompt
+     venv\Scripts\activate
+     # Windows Git Bash / Unix/MacOS/WSL
+     source venv/bin/activate
+     
+     # Then install requirements (use appropriate command for your system)
+     python -m pip install -r requirements.txt
+     # OR
+     python3 -m pip install -r requirements.txt
      ```
 
-4. **Node.js Version Conflicts**:
-   Use Node.js LTS for compatibility:
-   ```bash
-   curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-   sudo apt install nodejs
-   ```
+- If dependency issues in frontend: 
+  - Delete node_modules directory
+  - Delete package-lock.json
+  - Run npm install again
+- Node.js version issues:
+  - If Node.js version is inconsistent in Linux/WSL:
+    1. Check your current Node.js:
+       ```bash
+       which node     # See which node installation is being used
+       node --version # See current version
+       ```
+    2. Check if multiple versions are installed:
+       ```bash
+       # List installed nodejs packages
+       dpkg -l | grep nodejs
+       ```
+    3. To ensure a clean installation:
+       ```bash
+       # Remove existing installations
+       sudo apt remove nodejs
+       sudo apt remove npm
+       sudo apt autoremove
+       sudo rm -rf /etc/apt/sources.list.d/nodesource.list
+       sudo apt clean
+       sudo apt update
+
+       # Then reinstall using nodesource (this will install LTS version)
+       curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+       sudo apt install nodejs
+       ```
+- If ports are already in use: Make sure no other instances are running on ports 8000 or 3000
+- If you get Python import errors after pulling new changes:
+  ```bash
+  python -m pip install -r requirements.txt  # Install any new dependencies
+  ```
+- If you get npm errors after pulling new changes:
+  ```bash
+  npm install  # Install any new dependencies
+  ```
+
 
 ---
 
