@@ -123,6 +123,7 @@ def get_fit_score(payload: AIRequestSchema):
     try:
         result = analyze_with_openai(payload.resume_text, payload.job_description)
         fit_score = calculate_fit_score(payload.resume_text, payload.job_description)
+        fit_score_gpt = result.get("fit_score", [])
         key = "missing_keywords"
         feedback = generate_feedback(payload.resume_text,payload.job_description)
         feedback_missing_keywords = feedback.get(key, [])
@@ -130,10 +131,11 @@ def get_fit_score(payload: AIRequestSchema):
         keywords = result.get("keywords", [])
         experience = result.get("feedback", {}).get("experience", [])
         skills = result.get("skills", [])
+        final_fit_score = (fit_score + fit_score_gpt) / 2
         # Return final results
 
         return {"feedback": {
-            "fit_score": fit_score,
+            "fit_score": final_fit_score,
             "keywords": keywords, 
             "skills": skills,
             "feedback": {"skills": feedback_missing_keywords, "experience": experience, "formatting": feedback.get("formatting", [])}
