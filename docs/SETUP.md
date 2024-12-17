@@ -113,6 +113,13 @@ source venv/bin/activate
 ### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
+
+# OR
+
+# Windows
+python -m pip install -r requirements.txt
+# Unix/MacOS/WSL
+python3 -m pip install -r requirements.txt
 ```
 
 ### 5. Start the Backend Server
@@ -222,9 +229,11 @@ You should have:
      ```
   3. Activate new environment and reinstall requirements:
      ```bash
-     # Windows Command Prompt
+     # Windows (Command Prompt)
      venv\Scripts\activate
-     # Windows Git Bash / Unix/MacOS/WSL
+     # Windows (Git Bash)
+     source venv/Scripts/activate
+     # Unix/MacOS/WSL
      source venv/bin/activate
      
      # Then install requirements (use appropriate command for your system)
@@ -266,7 +275,12 @@ You should have:
 - If ports are already in use: Make sure no other instances are running on ports 8000 or 3000
 - If you get Python import errors after pulling new changes:
   ```bash
-  python -m pip install -r requirements.txt  # Install any new dependencies
+  # install any new dependencies
+  
+  # Windows
+  python -m pip install -r requirements.txt
+  # Unix/MacOS/WSL
+  python3 -m pip install -r requirements.txt
   ```
 - If you get npm errors after pulling new changes:
   ```bash
